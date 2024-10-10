@@ -25,8 +25,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddDbContext<DatabaseContext>();
 
-builder.Services.AddIdentityCore<User>()
-    .AddRoles<IdentityRole>()
+builder.Services.AddIdentityCore<Users>()
     .AddEntityFrameworkStores<DatabaseContext>()
     .AddSignInManager();
 

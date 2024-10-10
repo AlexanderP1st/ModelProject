@@ -2,10 +2,11 @@
 {
     public class Watchlist
     {
-        public int Id { get; set; } 
-        public User User { get; set; } 
+        public int Id { get; set; }
+        public Users UserID { get; set; } 
+        public Model ModelID { get; set; }
 
-        public DigitalModel DigitalModel { get; set; } 
+       
 
 
     }

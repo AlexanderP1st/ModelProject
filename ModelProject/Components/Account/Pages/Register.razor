@@ -8,9 +8,9 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 
-@inject UserManager<User> UserManager
-@inject IUserStore<User> UserStore
-@inject SignInManager<User> SignInManager
+@inject UserManager<Users> UserManager
+@inject IUserStore<Users> UserStore
+@inject SignInManager<Users> SignInManager
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
@@ -58,9 +58,9 @@
 
     public async Task RegisterUser(EditContext editContext)
     {
-        var user = Activator.CreateInstance<User>(); ;
+        var user = Activator.CreateInstance<Users>(); ;
         await UserStore.SetUserNameAsync(user, Model.Email, CancellationToken.None);
-        var emailStore = (IUserEmailStore<User>)UserStore;
+        var emailStore = (IUserEmailStore<Users>)UserStore;
         await emailStore.SetEmailAsync(user, Model.Email, CancellationToken.None);
         var result = await UserManager.CreateAsync(user, Model.Password);
 
