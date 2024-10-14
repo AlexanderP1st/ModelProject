@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using ModelProject.Model;
+using System.Runtime.CompilerServices;
 
 namespace ModelProject.Context
 {
@@ -22,6 +23,26 @@ namespace ModelProject.Context
         {
             await _context.Database.MigrateAsync();
 
+           
+            
+            if (!_context.Users.Any())
+            {
+                await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                await _roleManager.CreateAsync(new IdentityRole("Customer"));
+
+                var adminEmail = "admin@modelhub.com";
+                var adminPassword = "Model£45$";
+
+                var admin = new User
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                };
+                await _userManager.CreateAsync(admin, adminPassword);
+                await _userManager.AddToRoleAsync(admin, "Admin"); 
+
+             
+            }
         }
     }
 }
