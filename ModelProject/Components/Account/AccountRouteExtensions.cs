@@ -14,7 +14,7 @@ namespace ModelProject.Components.Account
 
             accountGroup.MapGet("/Logout", async (
                ClaimsPrincipal user,
-               SignInManager<Users> signInManager,
+               SignInManager<User> signInManager,
                string? returnUrl) =>
             {
                 await signInManager.SignOutAsync();
