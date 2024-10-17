@@ -23,8 +23,8 @@ namespace ModelProject.Context
         {
             await _context.Database.MigrateAsync();
 
-           
-            
+        
+
             if (!_context.Users.Any())
             {
                 await _roleManager.CreateAsync(new IdentityRole("Admin"));
@@ -43,6 +43,7 @@ namespace ModelProject.Context
 
              
             }
+
 
 
 
