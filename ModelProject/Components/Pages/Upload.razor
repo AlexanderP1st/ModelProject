@@ -1,9 +1,53 @@
 ﻿@page "/Upload"
 
-<h3>Upload Page</h3>
+<h5>Upload Page</h5>
 
+@*Allows the user to input a Model Name:*@
+<div class="input-group mb-3">
+    <span class="input-group-text" id="inputGroup-sizing-defult">Model Name:</span>
+    <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
+</div>
 
-@code {
+@*Allows the user to input the Files of a 3D model*@
+<div class="mb-3">
+ <label for="="formFile" class="form-label">Please Input The Model Files</label>
+ <input class="form-control" type="file" id="formFile" accept=".obj,.fbx,.stl,.gltf,.glb" multiple>
+</div>
+
+@*Allows the user to input images of a 3D model*@
+<div class="mb-3">
+    <label for="=" formFile" class="form-label">Please Input Images of the 3D Model</label>
+    <input class="form-control" type="file" id="formFile" accept=".jpf,.jpeg,.png" multiple>
+</div>
+
+@*Allows the user to input a description*@
+<div class="input-group mb-3">
+    <span class="input-group-text" id="inputGroup-sizing-defult">Description:</span>
+    <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
+</div>
+
+@*Allows the user to input a description*@
+<div class="input-group mb-3">
+    <span class="input-group-text" id="inputGroup-sizing-defult">Specifications</span>
+    <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
+</div>
+
+<div class="dropdown"> 
+    <button class="btn btn-secandary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Catagory 
+    </button>
+    <ul class="="dropdown-menu"> 
+        <li><a class="dropdown-item" href="#">Vehicles</a></li>
+        <li><a class="dropdown-item" href="#">Sci-Fi</a></li>
+        <li><a class="dropdown-item" href="#">Animal</a></li>
+        <li><a class="dropdown-item" href="#">Horror</a></li>
+        <li><a class="dropdown-item" href="#">Vidogame</a></li>
+        <li><a class="dropdown-item" href="#"></a></li>
+    </ul>
+</div>
+
+@code 
+{
    
 
 }
