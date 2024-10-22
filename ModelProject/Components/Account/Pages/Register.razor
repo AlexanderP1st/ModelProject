@@ -23,22 +23,28 @@
         <h4 class="card-title">Register</h4>
 
         <EditForm OnValidSubmit="RegisterUser" Model="Model" FormName="registerForm">
+            <DataAnnotationsValidator /> 
+
             <div class="row g-3">
                 <div class="col-md-12">
                     <label for="username" class="form-label">Username</label>
                     <InputText class="form-control" placeholder="Username" @bind-Value="Model.Username" />
+                         <ValidationMessage For="@(() => Model!.Username)" />
                 </div>
                 <div class="col-md-12">
                     <label for="email" class="form-label">Email</label>
                     <InputText class="form-control" placeholder="Email" @bind-Value="Model.Email" />
+                    <ValidationMessage For="@(() => Model!.Email)" />
                 </div>
                 <div class="col-md-6">
                     <label for="password" class="form-label">Password</label>
                     <InputText type="password" class="form-control" placeholder="Password" @bind-Value="Model.Password" />
+                    <ValidationMessage For="@(() => Model!.Password)" />
                 </div>
                 <div class="col-md-6">
                     <label for="name" class="form-label">Confirm Password</label>
                     <InputText type="password" class="form-control" placeholder="Confirm Password" @bind-Value="Model.ConfirmPassword" />
+                    <ValidationMessage For="@(() => Model!.ConfirmPassword)" />
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100">Register</button>
@@ -89,12 +95,19 @@
 
     private sealed class RegisterModel
     {
+        [Required(ErrorMessage = "Please enter a Username.")]
         public string Username { get; set; } = "";
 
+        [Required(ErrorMessage = "Please enter your email.")]
+        [EmailAddress(ErrorMessage = "Please enter a valid Email.")]
         public string Email { get; set; } = "";
 
+        [Required(ErrorMessage = "Please enter a Password.")]
+        [DataType(DataType.Password)]
         public string Password { get; set; } = "";
 
+        [Required(ErrorMessage = "Please enter the same Password.")]
+        [Compare("Password", ErrorMessage = "The password and Confrimation password do not match")]
         public string ConfirmPassword { get; set; } = "";
     }
 }
