@@ -32,37 +32,51 @@
     <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
 </div>
 
-<div class="dropdown"> 
+<div class="btn-group">
     <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        Category 
+        @(string.IsNullOrEmpty(selectedCategory) ? "Category" : selectedCategory)
     </button>
-    <ul class="dropdown-menu"> 
-        <li><a class="dropdown-item" href="#">Vehicles</a></li>
-        <li><a class="dropdown-item" href="#">Sci-Fi</a></li>
-        <li><a class="dropdown-item" href="#">Animal</a></li>
-        <li><a class="dropdown-item" href="#">Horror</a></li>
-        <li><a class="dropdown-item" href="#">Videogame</a></li>
-        <li><a class="dropdown-item" href="#">Character</a></li>
+    <ul class="dropdown-menu">
+        @foreach (var category in categories)
+        {
+            <li><a class="dropdown-item" @onclick="@(() => SelectCategory(category))">@category</a></li>
+        }
     </ul>
 </div>
 
 <div class="btn-group">
    <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        File Format 
-    </button>
+        @(string.IsNullOrEmpty(selectedFormat) ? "File Format" :selectedFormat) 
+   </button>
     <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">obj</a></li>
-        <li><a class="dropdown-item" href="#">fbx</a></li>
-        <li><a class="dropdown-item" href="#">stl</a></li>
-        <li><a class="dropdown-item" href="#">gltf</a></li>
-        <li><a class="dropdown-item" href="#">glb</a></li>
+        @foreach (var format in fileFormats)
+        {
+            <li><a class="dropdown-item" @onclick="@(() => SelectFormat(format))">@format</a></li>
+        }
     </ul>
 </div>
+
+<input class="btn btn primary" type="submit" value="Submit"> 
 
 
 
 @code 
 {
-   
+    private string selectedCategory;
+    private string selectedFormat;
+
+    private List<string> categories = new() { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character" };
+    private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
+
+    private void SelectCategory(string category)
+    {
+        selectedCategory = category;
+    }
+
+    private void SelectFormat(string format)
+    {
+        selectedFormat = format;
+    }
+
 
 }
