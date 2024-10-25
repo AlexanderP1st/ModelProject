@@ -1,5 +1,8 @@
 ﻿@page "/Upload"
 
+@inject ModelProvider ModelProvider
+@inject NavigationManager NavigationManager
+
 <h5>Upload Page</h5>
 
 @*Allows the user to input a Model Name:*@
@@ -32,6 +35,7 @@
     <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
 </div>
 
+@*Creates a dropdown for a user to select what catagory the model falls under*@
 <div class="btn-group">
     <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         @(string.IsNullOrEmpty(selectedCategory) ? "Category" : selectedCategory)
@@ -44,6 +48,7 @@
     </ul>
 </div>
 
+@*Creates a dropdown for a user to select what file format the model falls under*@
 <div class="btn-group">
    <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         @(string.IsNullOrEmpty(selectedFormat) ? "File Format" :selectedFormat) 
@@ -56,14 +61,20 @@
     </ul>
 </div>
 
-<input class="btn btn primary" type="submit" value="Submit"> 
-
+<a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
 
 
 @code 
 {
+    private string title;
+    private string category;
+    private string description;
+    private string specifications;
+    private int downloads = 0;
+    private int fileSize;
     private string selectedCategory;
     private string selectedFormat;
+
 
     private List<string> categories = new() { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character" };
     private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
@@ -79,4 +90,20 @@
     }
 
 
+    private void UploadModel()
+    {
+        var model = new DigitalModel
+            {
+             Title = title,
+             Catagory = category,
+             Description = description,
+             Specifications= specifications,
+             Downloads = downloads,
+             FileSize = fileSize
+
+            };
+
+        ModelProvider.AddModel(model);
+        NavigationManager.NavigateTo("/");
+    }
 }
