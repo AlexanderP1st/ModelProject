@@ -1,6 +1,28 @@
 ﻿@page "/"
+@inject ModelProvider ModelProvider 
 
 <PageTitle>AP Models</PageTitle>
 
-<h1>AP Models</h1>
+@if (models == null || !models.Any())
+{
+    <p>No models uploaded yet.</p>
+}
+else
+{
+    <ul>
+        @foreach (var model in models)
+        {
+            <li>@model.Title - @model.Category</li>
+        }
+    </ul>
+}
 
+@code
+{
+    private List<Model.DigitalModel> models;
+
+    protected override void OnInitialized()
+    {
+        models = ModelProvider.GetAllModels();
+    }
+}

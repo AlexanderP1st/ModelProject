@@ -1,5 +1,4 @@
 ﻿@page "/Upload"
-
 @inject ModelProvider ModelProvider
 @inject NavigationManager NavigationManager
 
@@ -67,13 +66,12 @@
 @code 
 {
     private string title;
-    private string category;
     private string description;
     private string specifications;
-    private int downloads = 0;
-    private int fileSize;
     private string selectedCategory;
     private string selectedFormat;
+    private List<string> modelFilePaths = new();
+    private List<string> imageFilePaths = new();
 
 
     private List<string> categories = new() { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character" };
@@ -92,17 +90,17 @@
 
     private void UploadModel()
     {
-        var model = new DigitalModel
-            {
+        var model = new Model.DigitalModel
+        {
              Title = title,
-             Catagory = category,
+             Category = selectedCategory,
              Description = description,
              Specifications= specifications,
-             Downloads = downloads,
-             FileSize = fileSize
+             Downloads = 0,
+             FileSize = 0,
+        };
 
-            };
-
+        // saves the model and redirects the user to the home page
         ModelProvider.AddModel(model);
         NavigationManager.NavigateTo("/");
     }
