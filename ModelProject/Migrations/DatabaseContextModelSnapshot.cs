@@ -165,6 +165,10 @@ namespace ModelProject.Migrations
                     b.Property<int>("FileSize")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Images")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Specifications")
                         .IsRequired()
                         .HasColumnType("TEXT");

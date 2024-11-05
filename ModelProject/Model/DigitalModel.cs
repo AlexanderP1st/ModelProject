@@ -7,6 +7,9 @@
         public User User { get; set; }
         public string Title { get; set; }
 
+        public string[] ModelFiles { get; set; }
+
+        public string[] Images { get; set; } 
         public string Category { get; set; }
 
         public string Description { get; set; }

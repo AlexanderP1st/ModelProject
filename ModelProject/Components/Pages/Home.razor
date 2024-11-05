@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject ModelProvider ModelProvider 
+@inject NavigationManager NavigationManager
 
 <PageTitle>AP Models</PageTitle>
 
@@ -21,7 +22,8 @@ else
                      <div class="card-body">
                          <h5 class="card-title">@model.Title</h5>
                          <p class="card-text">@model.Category</p>
-                         <a href="@($"/model/{model.Id}")" class="btn btn-primary">View Details</a>
+                         <button @onclick="GoToModelPage" class="btn btn-outline-primary">View Details</button>
+
                      </div>
                  </div>
              </div>
@@ -37,5 +39,10 @@ else
     protected override void OnInitialized()
     {
         models = ModelProvider.GetAllModels();
+    }
+
+    private void GoToModelPage()
+    {
+        NavigationManager.NavigateTo("/ModelPage");
     }
 }

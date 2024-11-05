@@ -11,7 +11,7 @@ using ModelProject.Context;
 namespace ModelProject.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241029132518_InitialCreate")]
+    [Migration("20241105123323_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -167,6 +167,10 @@ namespace ModelProject.Migrations
 
                     b.Property<int>("FileSize")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Images")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Specifications")
                         .IsRequired()

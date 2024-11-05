@@ -3,7 +3,8 @@
 @inject NavigationManager NavigationManager
 
 <h5>Upload Page</h5>
-
+<div class="card text-centre">
+    
 @*Allows the user to input a Model Name:*@
 <div class="input-group mb-3">
     <span class="input-group-text" id="inputGroup-sizing-defult">Model Name:</span>
@@ -35,6 +36,7 @@
 </div>
 
 @*Creates a dropdown for a user to select what catagory the model falls under*@
+<label for="=" formFile" class="form-label">Please select the Category of your model</label>
 <div class="btn-group">
     <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         @(string.IsNullOrEmpty(selectedCategory) ? "Category" : selectedCategory)
@@ -48,6 +50,7 @@
 </div>
 
 @*Creates a dropdown for a user to select what file format the model falls under*@
+<label for="=" formFile" class="form-label">Please select the file format of your modell</label>
 <div class="btn-group">
    <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         @(string.IsNullOrEmpty(selectedFormat) ? "File Format" :selectedFormat) 
@@ -59,9 +62,8 @@
         }
     </ul>
 </div>
-
 <a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
-
+</div>
 
 @code 
 {
@@ -70,8 +72,11 @@
     private string specifications;
     private string selectedCategory;
     private string selectedFormat;
+    private string[] images;
+    private string[] modelFiles;
     private List<string> modelFilePaths = new();
     private List<string> imageFilePaths = new();
+
 
 
     private List<string> categories = new() { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character" };
@@ -87,6 +92,19 @@
         selectedFormat = format;
     }
 
+    private async Task OnModelFilesSelected(ChangeEventArgs e)
+    {
+        var files = e.Value as IEnumerable<IBrowserFile>;
+        modelFiles = files.Select(f => f.Name).ToArray();
+    }
+
+    private async Task OnImageSelected(ChangeEventArgs e)
+    {
+        var files = e.Value as IEnumerable<IBrowserFile>;
+        images = files.Select(f => f.Name).ToArray();
+    }
+
+
 
     private void UploadModel()
     {
@@ -95,12 +113,14 @@
              Title = title,
              Category = selectedCategory,
              Description = description,
+             ModelFiles = modelFiles,
+             Images = images,
              Specifications= specifications,
              Downloads = 0,
              FileSize = 0,
         };
 
-        // saves the model and redirects the user to the home page
+        // adds the model and redirects the user to the home page
         ModelProvider.AddModel(model);
         NavigationManager.NavigateTo("/");
     }
