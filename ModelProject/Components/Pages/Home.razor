@@ -4,7 +4,7 @@
 
 <PageTitle>AP Models</PageTitle>
 
-
+@*Checks if models have been uploaded*@
 @if (models == null || !models.Any())
 {
     <p>No models uploaded yet.</p>
@@ -21,8 +21,8 @@ else
                      <img src="defult-thumbnail.png" class="card-img-top" alt="@model.Title Thumbnail" />
                      <div class="card-body">
                          <h5 class="card-title">@model.Title</h5>
-                         <p class="card-text">@model.Category</p>
-                         <button @onclick="GoToModelPage" class="btn btn-outline-primary">View Details</button>
+                            <p class="card-text">@model.Category</p>
+                         <button @onclick="@(() => GoToModelPage(model.Id))" class="btn btn-outline-primary">View Details</button>
 
                      </div>
                  </div>
@@ -41,8 +41,8 @@ else
         models = ModelProvider.GetAllModels();
     }
 
-    private void GoToModelPage()
+    private void GoToModelPage(int modelId)
     {
-        NavigationManager.NavigateTo("/ModelPage");
+        NavigationManager.NavigateTo("/ModelPage/{modelId}");
     }
 }

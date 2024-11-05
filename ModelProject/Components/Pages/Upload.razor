@@ -7,8 +7,8 @@
     
 @*Allows the user to input a Model Name:*@
 <div class="input-group mb-3">
-    <span class="input-group-text" id="inputGroup-sizing-defult">Model Name:</span>
-    <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
+    <span class="input-group-text">Model Name:</span>
+    <input type="text" class="form-control" aria-label="Enter Here">
 </div>
 
 @*Allows the user to input the Files of a 3D model*@
@@ -92,12 +92,14 @@
         selectedFormat = format;
     }
 
+    //saves model files  
     private async Task OnModelFilesSelected(ChangeEventArgs e)
     {
         var files = e.Value as IEnumerable<IBrowserFile>;
         modelFiles = files.Select(f => f.Name).ToArray();
     }
 
+    //saves image files
     private async Task OnImageSelected(ChangeEventArgs e)
     {
         var files = e.Value as IEnumerable<IBrowserFile>;
