@@ -5,64 +5,67 @@
 <h5>Upload Page</h5>
 <div class="card text-centre">
     
-@*Allows the user to input a Model Name:*@
-<div class="input-group mb-3">
-    <span class="input-group-text" id="inputGroup-sizing-defult">Model Name:</span>
-    <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
-</div>
+       @*Allows the user to input a Model Name:*@
+       <div class="input-group mb-3">
+          <span class="input-group-text" id="inputGroup-sizing-defult">Model Name:</span>
+          <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
 
-@*Allows the user to input the Files of a 3D model*@
-<div class="mb-3">
- <label for="="formFile" class="form-label">Please Input The Model Files</label>
- <input class="form-control" type="file" id="formFile" accept=".obj,.fbx,.stl,.gltf,.glb" multiple>
-</div>
+       </div>
 
-@*Allows the user to input images of a 3D model*@
-<div class="mb-3">
-    <label for="=" formFile" class="form-label">Please Input Images of the 3D Model</label>
-    <input class="form-control" type="file" id="formFile" accept=".jpf,.jpeg,.png" multiple>
-</div>
+      @*Allows the user to input the Files of a 3D model*@
+      <div class="mb-3">
+         <label for="="formFile" class="form-label">Please Input The Model Files</label>
+         <input class="form-control" type="file" id="formFile" accept=".obj,.fbx,.stl,.gltf,.glb" multiple>
+      </div>
 
-@*Allows the user to input a description*@
-<div class="input-group mb-3">
-    <span class="input-group-text" id="inputGroup-sizing-defult">Description:</span>
-    <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
-</div>
+      @*Allows the user to input images of a 3D model*@
+      <div class="mb-3">
+         <label for="=" formFile" class="form-label">Please Input Images of the 3D Model</label>
+         <input class="form-control" type="file" id="formFile" accept=".jpf,.jpeg,.png" multiple>
+      </div>
 
-@*Allows the user to input a description*@
-<div class="input-group mb-3">
-    <span class="input-group-text" id="inputGroup-sizing-defult">Specifications</span>
-    <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
-</div>
+      @*Allows the user to input a description*@
+      <div class="input-group mb-3">
+          <span class="input-group-text" id="inputGroup-sizing-defult">Description:</span>
+          <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
+      </div>
 
-@*Creates a dropdown for a user to select what catagory the model falls under*@
-<label for="=" formFile" class="form-label">Please select the Category of your model</label>
-<div class="btn-group">
-    <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        @(string.IsNullOrEmpty(selectedCategory) ? "Category" : selectedCategory)
-    </button>
-    <ul class="dropdown-menu">
-        @foreach (var category in categories)
-        {
+      @*Allows the user to input Specifcations*@
+      <div class="input-group mb-3">
+          <span class="input-group-text" id="inputGroup-sizing-defult">Specifications</span>
+          <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
+      </div>
+
+      @*Creates a dropdown for a user to select what catagory the model falls under*@
+      <label for="=" formFile" class="form-label">Please select the Category of your model</label>
+      <div class="btn-group">
+          <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+             @(string.IsNullOrEmpty(selectedCategory) ? "Category" : selectedCategory)
+          </button>
+       <ul class="dropdown-menu">
+         @foreach (var category in categories)
+         {
             <li><a class="dropdown-item" @onclick="@(() => SelectCategory(category))">@category</a></li>
-        }
-    </ul>
-</div>
+         }
+       </ul>
+      </div>
 
-@*Creates a dropdown for a user to select what file format the model falls under*@
-<label for="=" formFile" class="form-label">Please select the file format of your modell</label>
-<div class="btn-group">
-   <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        @(string.IsNullOrEmpty(selectedFormat) ? "File Format" :selectedFormat) 
-   </button>
-    <ul class="dropdown-menu">
-        @foreach (var format in fileFormats)
-        {
+      @*Creates a dropdown for a user to select what file format the model falls under*@
+      <label for="=" formFile" class="form-label">Please select the file format of your modell</label>
+     <div class="btn-group">
+        <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            @(string.IsNullOrEmpty(selectedFormat) ? "File Format" :selectedFormat) 
+        </button>
+       <ul class="dropdown-menu">
+         @foreach (var format in fileFormats)
+         {
             <li><a class="dropdown-item" @onclick="@(() => SelectFormat(format))">@format</a></li>
-        }
-    </ul>
-</div>
-<a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
+         } 
+       </ul>
+     </div>
+     
+     <a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
+
 </div>
 
 @code 
@@ -123,5 +126,6 @@
         // adds the model and redirects the user to the home page
         ModelProvider.AddModel(model);
         NavigationManager.NavigateTo("/");
+
     }
 }
