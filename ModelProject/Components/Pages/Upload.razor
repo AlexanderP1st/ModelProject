@@ -95,12 +95,14 @@
         selectedFormat = format;
     }
 
+    //saves model files  
     private async Task OnModelFilesSelected(ChangeEventArgs e)
     {
         var files = e.Value as IEnumerable<IBrowserFile>;
         modelFiles = files.Select(f => f.Name).ToArray();
     }
 
+    //saves image files
     private async Task OnImageSelected(ChangeEventArgs e)
     {
         var files = e.Value as IEnumerable<IBrowserFile>;
