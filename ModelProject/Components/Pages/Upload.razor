@@ -4,20 +4,25 @@
 
 <h5>Upload Page</h5>
 <div class="card text-centre">
-    
+    <form class="row g-3 needs-validation" novalidate>
        @*Allows the user to input a Model Name:*@
-       <div class="input-group mb-3">
-          <span class="input-group-text" id="inputGroup-sizing-defult">Model Name:</span>
-          <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
-
+       <div class="mb-3">
+          <label for="validationFormCheck1" class="form-label">Model Name:</label>
+          <input type="text" class="input-group-text" id="validationFormCheck1" placeholder="Required Model name" required>
+          <div class="invalid-feedback">
+              Please enter a model name
+          </div>     
        </div>
 
       @*Allows the user to input the Files of a 3D model*@
       <div class="mb-3">
          <label for="="formFile" class="form-label">Please Input The Model Files</label>
-         <input class="form-control" type="file" id="formFile" accept=".obj,.fbx,.stl,.gltf,.glb" multiple>
+         <input class="form-control" type="file" id="formFile" accept=".obj,.fbx,.stl,.gltf,.glb" required>
+         <div class="invalid feedback">
+             Please select a file 
+         </div>
       </div>
-
+    
       @*Allows the user to input images of a 3D model*@
       <div class="mb-3">
          <label for="=" formFile" class="form-label">Please Input Images of the 3D Model</label>
@@ -65,7 +70,7 @@
      </div>
      
      <a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
-
+    </form>
 </div>
 
 @code 
