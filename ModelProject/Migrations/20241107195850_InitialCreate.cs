@@ -163,11 +163,12 @@ namespace ModelProject.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     UserId = table.Column<string>(type: "TEXT", nullable: true),
-                    Title = table.Column<string>(type: "TEXT", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 15, nullable: false),
+                    ModelFiles = table.Column<string>(type: "TEXT", nullable: false),
                     Images = table.Column<string>(type: "TEXT", nullable: false),
                     Category = table.Column<string>(type: "TEXT", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: false),
-                    Specifications = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    Specifications = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
                     Downloads = table.Column<int>(type: "INTEGER", nullable: false),
                     FileSize = table.Column<int>(type: "INTEGER", nullable: false)
                 },

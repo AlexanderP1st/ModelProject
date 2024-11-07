@@ -157,6 +157,7 @@ namespace ModelProject.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Downloads")
@@ -169,12 +170,18 @@ namespace ModelProject.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ModelFiles")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Specifications")
                         .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasMaxLength(15)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")

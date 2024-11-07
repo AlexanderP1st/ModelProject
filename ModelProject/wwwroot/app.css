@@ -27,3 +27,8 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+--#{$prefix}form-valid-color: #{$form-valid-color};
+--#{$prefix}form-valid-border-color: #{$form-valid-border-color};
+--#{$prefix}form-invalid-color: #{$form-invalid-color};
+--#{$prefix}form-invalid-border-color: #{$form-invalid-border-color};
