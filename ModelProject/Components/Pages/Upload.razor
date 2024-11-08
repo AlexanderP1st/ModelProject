@@ -5,17 +5,19 @@
 
 @page "/Upload"
 @inject ModelProvider ModelProvider
+@inject NavigationManager Navigation
 @inject NavigationManager NavigationManager
 
 @*Checks if the user is signed in*@
 <AuthorizeView>
     <Authorized>
+      <EditForm Model="@Model" OnInvalidSubmit="@HandleSubmit"
         <h5>Upload Page</h5>
         <form class="row g-3 needs-validation" novalidate>
             @*Allows the user to input a Model Name:*@
             <div class="col-md-4 position-relative">
                 <label for="validationTooltip01" class="form-label">Model Name:</label>
-                <input type="text" class="form-control" id="validationTooltip01" required>
+                <input type="text" class="form-control" @bind-value="Model.Title" id="validationTooltip01" required>
                 <div class="valid-tooltip">
                     Perfect
                 </div>
@@ -25,9 +27,7 @@
             <div class="mb-3">
                 <label for="=" formFile" class="form-label">Please Input The Model Files</label>
                 <input class="form-control" type="file" id="formFile" accept=".obj,.fbx,.stl,.gltf,.glb" required>
-                <div class="invalid feedback">
-                    Please select a file
-                </div>
+                
             </div>
 
             @*Allows the user to input images of a 3D model*@
@@ -38,14 +38,20 @@
 
             @*Allows the user to input a description*@
             <div class="input-group mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-defult">Description:</span>
-                <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
+                <span class="input-group-text" id="validationTooltip02">Description:</span>
+                <input type="text" class="form-control" id="validationTooltip02" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
+                <div class="valid-tooltip">
+                    Perfect
+                </div>
             </div>
 
             @*Allows the user to input Specifcations*@
             <div class="input-group mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-defult">Specifications</span>
-                <input type="text" class="form-control" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
+                <span class="input-group-text" id="validationTooltip03" >Specifications</span>
+                <input type="text" class="form-control" id="validationTooltip03"  aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt">
+                <div class="valid-tooltip">
+                    Perfect
+                </div>
             </div>
 
             @*Creates a dropdown for a user to select what catagory the model falls under*@
@@ -81,13 +87,19 @@
 
     </Authorized>
 
+    @*Allows the user to either Login or Register*@
    <NotAuthorized>
-        <li class="nav-item">
-           <NavLink class="nav-link" href="/Account/Login" Match="NavLinkMatch.Prefix">Login</NavLink>
-        </li>
-        <li class="nav-item">
-            <NavLink class="nav-link" href="/Account/Register" Match="NavLinkMatch.Prefix">Register</NavLink>
-        </li>
+       <div class="card mb-3">
+            <h5>You are need an account to upload a model</h5>
+          <li class="nav-item">
+             <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
+           
+          </li>
+
+          <li class="nav-item">
+            <button class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
+          </li>
+       </div>
    </NotAuthorized>
 </AuthorizeView>
 
@@ -96,7 +108,7 @@
 
 @code 
 {
-    private Model.DigitalModel model = new Model.DigitalModel();
+    private Model.DigitalModel Model = new Model.DigitalModel();
     private string title;
     private string description;
     private string specifications;
@@ -107,6 +119,13 @@
     private List<string> modelFilePaths = new();
     private List<string> imageFilePaths = new();
 
+    private async Task HandleSubmit()
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            
+        }
+    }
 
 
     private List<string> categories = new() { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character" };
@@ -140,9 +159,9 @@
 
     private void UploadModel()
     {
-        
-        
-            var model = new Model.DigitalModel
+
+
+        var model = new Model.DigitalModel
                 {
                     Title = title,
                     Category = selectedCategory,
@@ -154,14 +173,22 @@
                     FileSize = 0,
                 };
 
-            // adds the model and redirects the user to the home page
-            ModelProvider.AddModel(model);
-            NavigationManager.NavigateTo("/");
-        
+        // adds the model and redirects the user to the home page
+        ModelProvider.AddModel(model);
+        NavigationManager.NavigateTo("/");
+
     }
 
+    @*Navigation to Login and Register page from Upload Page*@
+    private void NavigateToLogin()
+    {
+        Navigation.NavigateTo("/Account/Login");
+    }
 
-    
+    private void NavigateToRegister()
+    {
+        Navigation.NavigateTo("/Account/Register");
+    }
 
 }
 

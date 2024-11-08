@@ -9,8 +9,11 @@ public class ModelProvider
         models.Add(model); 
     }
     
+    
     public List<DigitalModel> GetAllModels()
     {
         return models; 
     }
+
+  
 }

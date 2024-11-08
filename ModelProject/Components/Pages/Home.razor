@@ -20,10 +20,9 @@ else
                  <div class="card">
                      <img src="defult-thumbnail.png" class="card-img-top" alt="@model.Title Thumbnail" />
                      <div class="card-body">
-                         <h5 class="card-title">@model.Title</h5>
+                            <p class="card-text">@model.Title</p>
                             <p class="card-text">@model.Category</p>
-                         <button @onclick="@(() => GoToModelPage(model.Id))" class="btn btn-outline-primary">View Details</button>
-
+                            <button @onclick="@(() => GoToModelPage(model.Id))" class="btn btn-outline-primary">View Details</button>
                      </div>
                  </div>
              </div>
@@ -34,6 +33,7 @@ else
 
 @code
 {
+    
     private List<Model.DigitalModel> models;
 
     protected override void OnInitialized()

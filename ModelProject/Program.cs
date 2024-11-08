@@ -16,6 +16,9 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddSingleton<ModelProvider>();
+builder.Services.AddScoped<UserProvider>();
+builder.Services.AddScoped<ModelProvider>();
+
 
 
 builder.Services.AddAuthentication(options =>
@@ -33,6 +36,8 @@ builder.Services.AddIdentityCore<User>()
     .AddSignInManager();
 
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
