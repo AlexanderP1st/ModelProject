@@ -5,29 +5,29 @@ using Microsoft.EntityFrameworkCore;
 using ModelProject.Context;
 public class ModelProvider
 {
-    private readonly List<DigitalModel> models = new();
+    private readonly DatabaseContext _context;
 
-    private readonly DatabaseContext _context; 
-    public void AddModelAsync(DigitalModel model)
-    {
-        models.Add(model); 
-    }
-    
     public ModelProvider(DatabaseContext context)
     {
-        _context = context; 
+        _context = context;
     }
 
+    public async void AddModelAsync(DigitalModel model)
+    {
+        _context.DigitalModels.Add(model);
+        await _context.SaveChangesAsync();
+    }
+    
     public async Task UpdateCheeseAsync(DigitalModel model)
     {
         _context.DigitalModels.Update(model);
+        await _context.SaveChangesAsync();
 
     }
     
-    public List<DigitalModel> GetAllModels()
+   public async Task<List<DigitalModel>> GetAllModelsAsync()
     {
-        return models; 
+        return await _context.DigitalModels.ToListAsync();
     }
-
   
 }
