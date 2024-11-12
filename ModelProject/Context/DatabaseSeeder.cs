@@ -23,6 +23,7 @@ namespace ModelProject.Context
         {
             await _context.Database.MigrateAsync();
 
+    
         
 
             if (!_context.Users.Any())
@@ -31,7 +32,7 @@ namespace ModelProject.Context
                 await _roleManager.CreateAsync(new IdentityRole("Customer"));
 
                 var adminEmail = "admin@modelhub.com";
-                var adminPassword = "Model£45$";
+                var adminPassword = "Model1234£$";
 
                 var admin = new User
                 {

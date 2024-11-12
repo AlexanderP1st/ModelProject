@@ -122,12 +122,15 @@
 
     private async Task HandleSubmit()
     {
-        if (Model == null)
+        if (string.IsNullOrWhiteSpace(Model.Title) || string.IsNullOrWhiteSpace(Model.Description))
         {
             return;
         }
 
+
         UploadModel();
+
+
         // submit the model
     }
 
@@ -170,6 +173,8 @@
 
     }
 
+    
+
     @*Navigation to Login and Register page from Upload Page*@
     private void NavigateToLogin()
     {
@@ -181,5 +186,6 @@
         Navigation.NavigateTo("/Account/Register");
     }
 
+   
 }
 
