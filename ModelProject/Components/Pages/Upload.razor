@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.ComponentModel.DataAnnotations
 
 @page "/Upload"
 @inject ModelProvider ModelProvider
@@ -12,7 +13,7 @@
 <AuthorizeView>
     <Authorized Context="Auth">
       @Auth.User.Identity.Name
-      <EditForm Model="@Model" OnInvalidSubmit="@HandleSubmit">
+      <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
         <h5>Upload Page</h5>
         <form class="row g-3 needs-validation" novalidate>
             @*Allows the user to input a Model Name:*@
@@ -106,7 +107,7 @@
 @code 
 {
     private DigitalModel Model = new Model.DigitalModel();
-    private string title;
+
     private string description;
     private string specifications;
     private string selectedCategory;
@@ -122,9 +123,10 @@
 
     private async Task HandleSubmit()
     {
-        if (string.IsNullOrWhiteSpace(Model.Title) || string.IsNullOrWhiteSpace(Model.Description))
+        if (Model.Id == 0)
         {
-            return;
+            await ModelProvider.Add(model);
+            Model = new UserModelUpload();
         }
 
 
@@ -186,6 +188,29 @@
         Navigation.NavigateTo("/Account/Register");
     }
 
-   
+    public sealed class UserModelUpload
+    {
+
+        [Required(ErrorMessage = "Model title is required.")]
+        public string Title { get; set; } = "";
+
+
+        [Required(ErrorMessage = "At least one model file is required.")]
+        public string ModelFiles { get; set; } = "";
+
+
+        [Required(ErrorMessage = "At least one image is required.")]
+        public string Images { get; set; } = "";
+
+        [Required(ErrorMessage = "Category is required.")]
+        public string Category { get; set; } = "";
+
+        [Required(ErrorMessage = "Description is required.")]
+        public string Description { get; set; } = "";
+
+        [Required(ErrorMessage = "Specifications are required.")]
+        public string Specifications { get; set; } = "";
+    }
+
 }
 
