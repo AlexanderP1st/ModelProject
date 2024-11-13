@@ -12,7 +12,6 @@
 @*Checks if the user is signed in*@
 <AuthorizeView>
     <Authorized Context="Auth">
-      @Auth.User.Identity.Name
       <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
         <h5>Upload Page</h5>
         <form class="row g-3 needs-validation" novalidate>
@@ -120,13 +119,14 @@
     private List<string> modelFilePaths = new();
     private List<string> imageFilePaths = new();
     private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character" };
+    private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
 
     private async Task HandleSubmit()
     {
         if (Model.Id == 0)
         {
-            await ModelProvider.Add(model);
-            Model = new UserModelUpload();
+           await ModelProvider.Add(Model);
+           Model = new UserModelUpload();
         }
 
 
@@ -137,7 +137,7 @@
     }
 
 
-    private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
+   
 
     private void SelectCategory(string category)
     {
@@ -170,7 +170,7 @@
         Model.ModelFiles = fileformat;
         Model.Category = category;
         // adds the model and redirects the user to the home page
-        ModelProvider.AddModel(Model);
+        ModelProvider.AddModelAsync(Model);
         NavigationManager.NavigateTo("/");
 
     }
