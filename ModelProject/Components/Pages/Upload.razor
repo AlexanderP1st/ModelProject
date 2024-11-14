@@ -105,7 +105,11 @@
 
 @code 
 {
+    [Parameter]
+    public DigitalModel? DigitalModel { get; set; }
+
     private DigitalModel Model = new Model.DigitalModel();
+
 
     private string description;
     private string specifications;
@@ -123,14 +127,25 @@
 
     private async Task HandleSubmit()
     {
-        if (Model.Id == 0)
+        var digitalmodel = DigitalModel ?? new DigitalModel();
+
+        digitalmodel.Title =  Model.Title;
+        digitalmodel.Description = Model.Description;
+        digitalmodel.ModelFiles = Model.ModelFiles;
+        digitalmodel.Images = Model.Images;
+        digitalmodel.Specifications = Model.Specifications;
+
+        if (digitalmodel.Id == 0 )
         {
-           await ModelProvider.Add(Model);
-           Model = new UserModelUpload();
+            await ModelProvider.AddModelAsync(digitalmodel);
+            Model = new DigitalModel();
+        }
+        else
+        {
+            await ModelProvider.UpdateModelAsync(digitalmodel);
         }
 
-
-        UploadModel();
+        NavigationManager.NavigateTo("/");
 
 
         // submit the model
@@ -210,6 +225,21 @@
 
         [Required(ErrorMessage = "Specifications are required.")]
         public string Specifications { get; set; } = "";
+
+        public UserModelUpload()
+        {
+
+        }
+
+        public UserModelUpload(DigitalModel digitalModel)
+        {
+            Title = digitalModel.Title;
+            ModelFiles = digitalModel.ModelFiles;
+            Images = digitalModel.Images;
+            Category = digitalModel.Category;
+            Description = digitalModel.Description;
+            Specifications = digitalModel.Specifications; 
+        }
     }
 
 }

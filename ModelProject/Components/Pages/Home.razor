@@ -5,7 +5,7 @@
 <PageTitle>AP Models</PageTitle>
 
 @*Checks if models have been uploaded*@
-@if (models == null || !models.Any())
+@if (digitalmodels == null || !digitalmodels.Any())
 {
     <p>No models uploaded yet.</p>
 }
@@ -14,7 +14,7 @@ else
     //the format of the model on the hompage 
    <div class="container">
        <div class="row">
-           @foreach(var model in models)
+           @foreach(var model in digitalmodels)
             {
              <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                  <div class="card">
@@ -34,11 +34,11 @@ else
 @code
 {
     
-    private List<Model.DigitalModel> models;
+    private List<Model.DigitalModel> digitalmodels;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        models = ModelProvider.GetAllModels();
+        digitalmodels = await ModelProvider.GetAllModelsAsync();
     }
 
     private void GoToModelPage(int modelId)
