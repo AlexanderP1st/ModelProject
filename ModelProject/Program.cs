@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using ModelProject.Components.Account;
 using ModelProject.Context;
 using ModelProject.Model;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,9 +16,10 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-builder.Services.AddSingleton<ModelProvider>();
+builder.Services.AddScoped<ModelProvider>();
 builder.Services.AddScoped<UserProvider>();
 builder.Services.AddScoped<ModelProvider>();
+builder.Services.AddScoped<DatabaseSeeder>();
 
 
 

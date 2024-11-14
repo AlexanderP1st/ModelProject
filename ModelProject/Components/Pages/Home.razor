@@ -1,11 +1,14 @@
 ﻿@page "/"
+@using ModelProject.Model
+
 @inject ModelProvider ModelProvider 
 @inject NavigationManager NavigationManager
+@inject Upload Upload 
 
 <PageTitle>AP Models</PageTitle>
 
 @*Checks if models have been uploaded*@
-@if (digitalmodels == null || !digitalmodels.Any())
+@if (digitalModels == null || !digitalModels.Any())
 {
     <p>No models uploaded yet.</p>
 }
@@ -14,7 +17,7 @@ else
     //the format of the model on the hompage 
    <div class="container">
        <div class="row">
-           @foreach(var model in digitalmodels)
+           @foreach(var model in digitalModels)
             {
              <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                  <div class="card">
@@ -28,21 +31,66 @@ else
              </div>
              }
         </div>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4"/>
+             
+                @foreach (var digitalmodel in FilteredModels)
+                {
+                  <div class="col"> 
+                      <StoreItem DigitalModels="digitalmodels" />
+                  </div>
+                }
+                @if (!FilteredModels.Any())
+                {
+                   <p>No models found :(</p>
+                }
+       
    </div>
 }
 
 @code
 {
-    
-    private List<Model.DigitalModel> digitalmodels;
+    private IEnumerable<DigitalModel> digitalModels; 
+    private string searchTerm = "";
+
+    private SortCriteria sortCriteria = SortCriteria.Title;
+
+    private IEnumerable<Model.DigitalModel> filteredmodels;
+    private IEnumerable<Model.DigitalModel> FilteredModels; 
+    {
+        get
+        {
+            return filteredmodels.Where(GetSearchCriteria);
+        }
+        set
+        {
+            filteredmodels = value; 
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        digitalmodels = await ModelProvider.GetAllModelsAsync();
+        digitalModels = await ModelProvider.GetAllModelsAsync();
     }
 
     private void GoToModelPage(int modelId)
     {
         NavigationManager.NavigateTo("/ModelPage/{modelId}");
     }
+
+    private void Sort(SortCriteria criteria)
+    {
+        SortCriteria = criteria; 
+        filteredmodels = criteria switch
+        {
+            SortCriteria.Title => FilteredModels = filteredmodels.OrderBy(c => c.Title),
+            SortCriteria.Category => FilteredModels = filteredmodels.OrderBy(c => c.Category),
+            _ => filteredmodels
+        }
+    }
+    private enum SortCriteria
+    {
+        Title, 
+        Category
+    }
 }
+
