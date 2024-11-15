@@ -3,7 +3,7 @@
 
 @inject ModelProvider ModelProvider 
 @inject NavigationManager NavigationManager
-@inject Upload Upload 
+ 
 
 <PageTitle>AP Models</PageTitle>
 
@@ -21,7 +21,7 @@ else
             {
              <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                  <div class="card">
-                     <img src="defult-thumbnail.png" class="card-img-top" alt="@model.Title Thumbnail" />
+                     <img src="" class="card-img-top" alt="@model.Title Thumbnail" />
                      <div class="card-body">
                             <h5 class="card-title">@model.Title</h5>
                             <p class="card-text">@model.Category</p>
@@ -31,7 +31,7 @@ else
              </div>
              }
         </div>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4"/>
+        @*<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4"/>
              
                 @foreach (var digitalmodel in FilteredModels)
                 {
@@ -42,7 +42,7 @@ else
                 @if (!FilteredModels.Any())
                 {
                    <p>No models found :(</p>
-                }
+                }*@
        
    </div>
 }
@@ -50,12 +50,16 @@ else
 @code
 {
     private IEnumerable<DigitalModel> digitalModels; 
-    private string searchTerm = "";
-
+    @*private string searchTerm = "";
+    private bool GetSearchCriteria(DigitalModel digitalModel)
+    {
+        return digitalModel.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+        || digitalModel.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+    }
     private SortCriteria sortCriteria = SortCriteria.Title;
 
-    private IEnumerable<Model.DigitalModel> filteredmodels;
-    private IEnumerable<Model.DigitalModel> FilteredModels; 
+    private IEnumerable<DigitalModel> filteredmodels;
+    private IEnumerable<DigitalModel> FilteredModels
     {
         get
         {
@@ -65,7 +69,7 @@ else
         {
             filteredmodels = value; 
         }
-    }
+    }*@
 
     protected override async Task OnInitializedAsync()
     {
@@ -77,20 +81,20 @@ else
         NavigationManager.NavigateTo("/ModelPage/{modelId}");
     }
 
-    private void Sort(SortCriteria criteria)
+    @*private void Sort(SortCriteria criteria)
     {
-        SortCriteria = criteria; 
+        sortCriteria = criteria;
         filteredmodels = criteria switch
         {
             SortCriteria.Title => FilteredModels = filteredmodels.OrderBy(c => c.Title),
             SortCriteria.Category => FilteredModels = filteredmodels.OrderBy(c => c.Category),
             _ => filteredmodels
-        }
+        };
     }
     private enum SortCriteria
     {
         Title, 
         Category
-    }
+    }*@
 }
 
