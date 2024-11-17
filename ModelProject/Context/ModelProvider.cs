@@ -29,5 +29,7 @@ public class ModelProvider
     {
         return await _context.DigitalModels.ToListAsync();
     }
-  
+
+
+   
 }

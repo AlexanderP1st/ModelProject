@@ -1,9 +1,28 @@
 ﻿@page "/ModelPage"
+@using ModelProject.Model
 
+@inject ModelProvider ModelProvider
+@inject NavigationManager NavigationManager
 
+ <div class="container">
+       <div class="row">
+           @foreach(var model in digitalModels)
+            {
+             <div class="m-3">
+                 <div class="card">
+                     <h5 class="card-text">@model.Title</h5>
+                     <p class="card-text">@model.Description</p>
+                     <p class="card-text">@model.Category</p>
+                     <p class="card-text">@model.Specifications</p>
+                 </div>
+             </div>
+            }
+       </div>
+</div>
 <h5>Hello this is the model page</h5>
 @code
 {
+    private IEnumerable<DigitalModel> digitalModels;
 
 
 }
