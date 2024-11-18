@@ -125,24 +125,24 @@
 
     private async Task HandleSubmit()
     {
-        var digitalmodel = DigitalModel ?? new DigitalModel();
+        var digitalModel = DigitalModel ?? new DigitalModel();
 
-        digitalmodel.Id = Model.Id;
-        digitalmodel.Title =  Model.Title;
-        digitalmodel.Description = Model.Description;
-        digitalmodel.ModelFiles = Model.ModelFiles;
-        digitalmodel.Images = Model.Images;
-        digitalmodel.Specifications = Model.Specifications;
-        digitalmodel.FileFormat = Model.FileFormat;
+        digitalModel.Id = Model.Id;
+        digitalModel.Title =  Model.Title;
+        digitalModel.Description = Model.Description;
+        digitalModel.ModelFiles = Model.ModelFiles;
+        digitalModel.Images = Model.Images;
+        digitalModel.Specifications = Model.Specifications;
+        digitalModel.FileFormat = Model.FileFormat;
 
-        if (digitalmodel.Id == 0 )
+        if (digitalModel.Id == 0 )
         {
-            await ModelProvider.AddModelAsync(digitalmodel);
+            await ModelProvider.AddModelAsync(digitalModel);
             Model = new DigitalModel();
         }
         else
         {
-            await ModelProvider.UpdateModelAsync(digitalmodel);
+            await ModelProvider.UpdateModelAsync(digitalModel);
         }
 
         NavigationManager.NavigateTo("/");
