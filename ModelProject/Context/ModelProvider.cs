@@ -19,9 +19,9 @@ public class ModelProvider
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateModelAsync(DigitalModel digitalModel)
+    public async Task UpdateModelAsync(DigitalModel digitalModels)
     {
-        _context.DigitalModels.Update(digitalModel);
+        _context.DigitalModels.Update(digitalModels);
         await _context.SaveChangesAsync();
 
     }
