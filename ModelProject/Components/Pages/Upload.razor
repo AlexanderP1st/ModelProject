@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.ComponentModel.DataAnnotations
+@using static Microsoft.EntityFrameworkCore.DbLoggerCategory
 
 @page "/Upload"
 @inject ModelProvider ModelProvider
@@ -17,66 +18,63 @@
         <form class="row g-3 needs-validation" novalidate>
             @*Allows the user to input a Model Name:*@
             <div class="col-md-4 position-relative">
-                <label for="validationTooltip01" class="form-label">Model Name:</label>
-                <InputText type="text" class="form-control" @bind-Value="Model.Title" id="validationTooltip01" required />
-                <div class="valid-tooltip">
-                    Perfect
-                </div>
+                <label class="form-label">Model Name:</label>
+                <InputText type="text" class="form-control" @bind-Value="Model.Title" />
+               
             </div>
 
             @*Allows the user to input the Files of a 3D model*@
             <div class="mb-3">
-                <label for="=" formFile" class="form-label">Please Input The Model Files</label>
-                    <InputText class="form-control" @bind-Value="Model.ModelFiles" type="file" id="formFile" accept=".obj,.fbx,.stl,.gltf,.glb" required />
+                <label formFile" class="form-label">Please Input The Model Files</label>
+                <InputText class="form-control" @bind-Value="Model.ModelFiles" type="file" id="formFile" accept=".obj,.fbx,.stl,.gltf,.glb" />
                 
             </div>
 
             @*Allows the user to input images of a 3D model*@
             <div class="mb-3">
                 <label for="=" formFile" class="form-label">Please Input Images of the 3D Model</label>
-                    <InputText class="form-control" @bind-Value="Model.Images" type="file" id="formFile" accept=".jpf,.jpeg,.png" multiple />
+                <InputText class="form-control" @bind-Value="Model.Images" type="file" id="formFile" accept=".jpf,.jpeg,.png" multiple />
+                
             </div>
 
             @*Allows the user to input a description*@
             <div class="input-group mb-3">
-                <span class="input-group-text" id="validationTooltip02">Description:</span>
-                    <InputText class="form-control" @bind-Value="Model.Description" id="validationTooltip02" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
-                <div class="valid-tooltip">
-                    Perfect
-                </div>
+                <span class="input-group-text" >Description:</span>
+                    <InputText class="form-control" @bind-Value="Model.Description" />
+                    
             </div>
 
             @*Allows the user to input Specifcations*@
             <div class="input-group mb-3">
-                <span class="input-group-text" id="validationTooltip03" >Specifications</span>
-                    <InputText class="form-control" @bind-Value="Model.Specifications" id="validationTooltip03" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
-                <div class="valid-tooltip">
-                    Perfect
-                </div>
+                <span class="input-group-text" >Specifications</span>
+                <InputText class="form-control" @bind-Value="Model.Specifications" />
+                
             </div>
 
             @*Creates a dropdown for a user to select what catagory the model falls under*@
             <label form="formFile" class="form-label">Please select the Category of your model</label>
             <div class="btn-group">
-                <InputSelect id="categoryDropdown" class="form-select" @bind-Value="@category">
+                <InputSelect id="categoryDropdown" class="form-select" @bind-Value="Model.Category">
                     <option value="">Select a Category</option>
                     @foreach (var category in categories)
                     {
                         <option value="@category">@category</option>
                     }
                 </InputSelect>
+                
             </div>
 
             @*Creates a dropdown for a user to select what file format the model falls under*@
             <label form="formFile" class="form-label">Please select the file format of your model</label>
             <div class="btn-group">
-                    <InputSelect id="modelfilesDropdown" class="form-select" @bind-Value="@fileformat">
+                    <InputSelect id="modelfilesDropdown" class="form-select" @bind-Value="Model.FileFormat">
                         <option value="">Select the File Format</option>
                         @foreach (var ff in fileFormats)
                         {
                             <option value="@ff">@ff</option>
                         }
                     </InputSelect>
+                    
             </div>
 
             <a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
@@ -108,7 +106,7 @@
     [Parameter]
     public DigitalModel? DigitalModel { get; set; }
 
-    private DigitalModel Model = new Model.DigitalModel();
+    private DigitalModel Model = new DigitalModel();
 
 
     private string description;
@@ -129,11 +127,13 @@
     {
         var digitalmodel = DigitalModel ?? new DigitalModel();
 
+        digitalmodel.Id = Model.Id;
         digitalmodel.Title =  Model.Title;
         digitalmodel.Description = Model.Description;
         digitalmodel.ModelFiles = Model.ModelFiles;
         digitalmodel.Images = Model.Images;
         digitalmodel.Specifications = Model.Specifications;
+        digitalmodel.FileFormat = Model.FileFormat;
 
         if (digitalmodel.Id == 0 )
         {
@@ -152,7 +152,7 @@
     }
 
 
-   
+
 
     private void SelectCategory(string category)
     {
@@ -185,7 +185,7 @@
         Model.ModelFiles = fileformat;
         Model.Category = category;
         // adds the model and redirects the user to the home page
-        ModelProvider.AddModelAsync(Model);
+        ModelProvider.AddModelAsync(DigitalModel);
         NavigationManager.NavigateTo("/");
 
     }
@@ -226,6 +226,9 @@
         [Required(ErrorMessage = "Specifications are required.")]
         public string Specifications { get; set; } = "";
 
+        [Required(ErrorMessage = "FileFormat is required.")]
+        public string FileFormat { get; set; } = "";
+
         public UserModelUpload()
         {
 
@@ -238,7 +241,8 @@
             Images = digitalModel.Images;
             Category = digitalModel.Category;
             Description = digitalModel.Description;
-            Specifications = digitalModel.Specifications; 
+            Specifications = digitalModel.Specifications;
+            FileFormat = digitalModel.FileFormat;
         }
     }
 

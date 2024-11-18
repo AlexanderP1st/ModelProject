@@ -33,6 +33,8 @@ namespace ModelProject.Model
         [StringLength(500, ErrorMessage = "Specifications cannot exceed 500 characters..")]
         public string Specifications { get; set; }
 
+        [Required(ErrorMessage = "The FileFormat is required.")]
+        public string FileFormat { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Downloads cannot be negative.")]
         public int Downloads { get; set; }

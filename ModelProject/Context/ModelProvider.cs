@@ -12,15 +12,15 @@ public class ModelProvider
         _context = context;
     }
 
-    public async Task AddModelAsync(DigitalModel model)
+    public async Task AddModelAsync(DigitalModel digitalModel)
     {
-        _context.DigitalModels.Add(model);
+        _context.DigitalModels.Add(digitalModel);
         await _context.SaveChangesAsync();
     }
     
-    public async Task UpdateModelAsync(DigitalModel model)
+    public async Task UpdateModelAsync(DigitalModel digitalModel)
     {
-        _context.DigitalModels.Update(model);
+        _context.DigitalModels.Update(digitalModel);
         await _context.SaveChangesAsync();
 
     }
