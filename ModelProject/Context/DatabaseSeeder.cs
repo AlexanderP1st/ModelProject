@@ -23,7 +23,6 @@ namespace ModelProject.Context
         {
             await _context.Database.MigrateAsync();
 
-    
         
 
             if (!_context.Users.Any())
