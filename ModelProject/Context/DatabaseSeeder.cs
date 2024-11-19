@@ -10,20 +10,21 @@ namespace ModelProject.Context
     {
         private readonly DatabaseContext _context;
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager; 
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public DatabaseSeeder(DatabaseContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _userManager = userManager;
-            _roleManager = roleManager; 
+            _roleManager = roleManager;
         }
 
         public async Task Seed()
         {
             await _context.Database.MigrateAsync();
 
-        
+
+
 
             if (!_context.Users.Any())
             {
@@ -39,9 +40,9 @@ namespace ModelProject.Context
                     Email = adminEmail,
                 };
                 await _userManager.CreateAsync(admin, adminPassword);
-                await _userManager.AddToRoleAsync(admin, "Admin"); 
+                await _userManager.AddToRoleAsync(admin, "Admin");
 
-             
+
             }
 
 
