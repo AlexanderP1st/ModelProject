@@ -137,12 +137,12 @@
 
         if (digitalModel.Id == 0 )
         {
-            await ModelProvider.AddModelAsync(digitalModel);
+            await ModelProvider.AddModelAsync(Model);
             Model = new DigitalModel();
         }
         else
         {
-            await ModelProvider.UpdateModelAsync(digitalModel);
+            await ModelProvider.UpdateModelAsync(Model);
         }
 
         NavigationManager.NavigateTo("/");
@@ -164,20 +164,8 @@
         selectedFormat = format;
     }
 
-    //saves model files  
-    private async Task OnModelFilesSelected(ChangeEventArgs e)
-    {
-        var files = e.Value as IEnumerable<IBrowserFile>;
-        modelFiles = files.Select(f => f.Name).ToArray();
-    }
-
-    //saves image files
-    private async Task OnImageSelected(ChangeEventArgs e)
-    {
-        var files = e.Value as IEnumerable<IBrowserFile>;
-        images = files.Select(f => f.Name).ToArray();
-    }
-
+  
+    
 
 
     private void UploadModel()
@@ -185,7 +173,7 @@
         Model.ModelFiles = fileformat;
         Model.Category = category;
         // adds the model and redirects the user to the home page
-        ModelProvider.AddModelAsync(DigitalModel);
+        ModelProvider.AddModelAsync(Model);
         NavigationManager.NavigateTo("/");
 
     }

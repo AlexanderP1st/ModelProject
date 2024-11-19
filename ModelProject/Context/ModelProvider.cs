@@ -16,15 +16,15 @@ public class ModelProvider
         return await _context.DigitalModels.OrderBy(digitalModel => digitalModel.Title).ToListAsync();
        }
 
-       public async Task AddModelAsync(DigitalModel digitalModels)
+       public async Task AddModelAsync(DigitalModel Models)
        {
-        _context.DigitalModels.Add(digitalModels);
+        _context.DigitalModels.Add(Models);
         await _context.SaveChangesAsync();
        }
 
-        public async Task UpdateModelAsync(DigitalModel digitalModels)
+        public async Task UpdateModelAsync(DigitalModel Models)
         {
-        _context.DigitalModels.Update(digitalModels);
+        _context.DigitalModels.Update(Models);
         await _context.SaveChangesAsync();
 
         }
