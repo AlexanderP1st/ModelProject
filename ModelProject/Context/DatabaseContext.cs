@@ -31,5 +31,10 @@ namespace ModelProject.Context
             }
             optionbuilder.UseSqlite($"Data Source={folder}/database.db");
         }
+
+        public string GetWebRootPath()
+        {
+            return _environment.WebRootPath;
+        }
     }
 }

@@ -4,35 +4,41 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using ModelProject.Context;
 using Microsoft.AspNetCore.Components.Forms;
-using System;
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.AspNetCore.Hosting; 
 public class ModelProvider
 {
     private readonly DatabaseContext _context;
-    private readonly IWebHostEnvironment _environment;
-    
+   
 
     public ModelProvider(DatabaseContext context)
     {
         _context = context;
-        _environment = environment;
+        
 
     }
 
     public async Task<string> SaveFileAsync(IBrowserFile file)
     {
-        var uploadPath = Path.Combine(_environemt.WebRoot, "uploads");
-        Directory.CreateDirectory(uploadPath);
-
-        //This creates a file name which is unique 
         var fileName = $"{Guid.NewGuid()}_{file.Name}";
+
+
+        var uploadPath = Path.Combine(_context.GetWebRootPath(), "uploads");
+
+        if (!Directory.Exists(uploadPath))
+        {
+            Directory.CreateDirectory(uploadPath); 
+        }
         var filePath = Path.Combine(uploadPath, fileName);
 
-       //This saves the file 
-        await using var stream = new FileStream(filePath, FileMode.Create);
-        await file.OpenReadStream().CopyToAsync(stream);
+        using (var fileStream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(fileStream);
+        }
 
+        return $"/uploads/{fileName}"; 
 
-        return $"/uploads/{fileName}";
     }
     public async Task AddModelAsync(DigitalModel model)
     {
