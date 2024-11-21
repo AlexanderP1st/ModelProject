@@ -3,6 +3,8 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.ComponentModel.DataAnnotations
+@using System.IO;
+@using Microsoft.AspNetCore.Components.Forms; 
 
 @page "/Upload"
 @inject ModelProvider ModelProvider
@@ -15,6 +17,9 @@
         <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
             <h5>Upload Page</h5>
             <form class="row g-3 needs-validation" novalidate>
+
+                <h3 class="custom-primary">@User.UserName</h3>
+
                 @*Allows the user to input a Model Name:*@
                 <div class="col-md-4 position-relative">
                     <label for="validationTooltip01" class="form-label">Model Name:</label>
@@ -86,7 +91,7 @@
 
     @*Allows the user to either Login or Register*@
     <NotAuthorized>
-        <div class="card mb-3">
+      <div class="card mb-3">
             <h5>You are need an account to upload a model</h5>
         <li class="nav-item">
             <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
@@ -96,7 +101,7 @@
         <li class="nav-item">
             <button class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
         </li>
-        </div>
+     </div>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -105,6 +110,7 @@
 
 @code
 {
+    private User User { get; set; } = new();
     [Parameter]
     public DigitalModel? DigitalModel { get; set; }
 
@@ -190,6 +196,7 @@
 
     }
 
+    @*Working on uploading an image
     private async Task OnImageSelected(InputFileChangeEventArgs e)
     {
         var files = e.GetMultipleFiles();
@@ -199,7 +206,7 @@
             imageFilePaths.Add(imageUrl);
         }
         Model.Images = string.Join(",", imageFilePaths);
-    }
+    }*@
 
     @*Navigation to Login and Register page from Upload Page*@
     private void NavigateToLogin()
