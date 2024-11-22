@@ -1,9 +1,9 @@
 ﻿@page "/"
 @using ModelProject.Model
 
-@inject ModelProvider ModelProvider 
+@inject ModelProvider ModelProvider
 @inject NavigationManager NavigationManager
- 
+
 
 <PageTitle>AP Models</PageTitle>
 
@@ -14,49 +14,61 @@
 }
 else
 {
-    //the format of the model on the hompage 
-   <div class="container">
-       <div class="row">
-           @foreach(var model in digitalModels)
+    //the format of the model on the hompage
+    <div class="container">
+        <div class="row">
+            <div class="input-group">
+                <span class="input-group-text" id="search">🔍</span>
+                <input type="text" class="form-control" placeholder="Search for customer..." aria-label="Search" aria-describedby="search" @bind="searchTerm" @bind:event="oninput" />
+            </div>
+            @foreach (var model in digitalModels)
             {
-             <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-                 <div class="card">
-                     <img src="" class="card-img-top" alt="@model.Title Thumbnail" />
-                     <div class="card-body">
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card">
+                        <img src="" class="card-img-top" alt="@model.Title Thumbnail" />
+                        <div class="card-body">
                             <h5 class="card-title">@model.Title</h5>
                             <p class="card-text">@model.Category</p>
                             <button @onclick="@(() => GoToModelPage(model.Id))" class="btn btn-outline-primary">View Details</button>
-                     </div>
-                 </div>
-             </div>
-             }
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
-        @*<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4"/>
-             
-                @foreach (var digitalmodel in FilteredModels)
-                {
-                  <div class="col"> 
-                      <StoreItem DigitalModels="digitalmodels" />
-                  </div>
-                }
-                @if (!FilteredModels.Any())
-                {
-                   <p>No models found :(</p>
-                }*@
-       
-   </div>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4"/>
+
+    @foreach (var digitalmodel in FilteredModels)
+    {
+        <div class="col">
+           <StoreItem DigitalModels="digitalmodels" />
+        </div>
+    }
+
+
+    @if (!FilteredModels.Any())
+    {
+    <p>No models found :(</p>
+    }
+
+    </div>
 }
 
 @code
 {
-    private IEnumerable<DigitalModel> digitalModels; 
-    @*private string searchTerm = "";
+    private IEnumerable<DigitalModel> digitalModels;
+    private string searchTerm = "";
+
+
+
     private bool GetSearchCriteria(DigitalModel digitalModel)
     {
         return digitalModel.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
         || digitalModel.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
     }
     private SortCriteria sortCriteria = SortCriteria.Title;
+
+
+
 
     private IEnumerable<DigitalModel> filteredmodels;
     private IEnumerable<DigitalModel> FilteredModels
@@ -67,9 +79,24 @@ else
         }
         set
         {
-            filteredmodels = value; 
+            filteredmodels = value;
         }
-    }*@
+    }
+
+
+
+
+    private bool GetSearchCriteria (DigitalModel model)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm)) return true;
+
+        return model.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || model.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+    }
+
+
+
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,19 +108,26 @@ else
         NavigationManager.NavigateTo("/ModelPage/{modelId}");
     }
 
-    @*private void Sort(SortCriteria criteria)
+
+
+
+    private void Sort(SortCriteria criteria)
     {
         sortCriteria = criteria;
         filteredmodels = criteria switch
         {
             SortCriteria.Title => FilteredModels = filteredmodels.OrderBy(c => c.Title),
-            SortCriteria.Category => FilteredModels = filteredmodels.OrderBy(c => c.Category),
-            _ => filteredmodels
+            SortCriteria.Category => FilteredModels = filteredmodels.OrderBy(c => c.Category), _ => filteredmodels
         };
     }
+
+
+
     private enum SortCriteria
     {
-        Title, 
+        Title,
         Category
-    }*@
+
+    }
+
 }
