@@ -8,7 +8,7 @@
 <PageTitle>AP Models</PageTitle>
 
 @*Checks if models have been uploaded*@
-@if (digitalModels == null || !digitalModels.Any())
+@if (digitalModel == null || !digitalModel.Any())
 {
     <p>No models uploaded yet.</p>
 }
@@ -18,10 +18,10 @@ else
     <div class="container">
         <div class="row">
             <div class="input-group">
-                <span class="input-group-text" id="search">🔍</span>
-                <input type="text" class="form-control" placeholder="Search for customer..." aria-label="Search" aria-describedby="search" @bind="searchTerm" @bind:event="oninput" />
+                <span class="input-group-text" id="search">Search</span>
+                <input type="text" class="form-control" placeholder="Search for models..." aria-label="Search" aria-describedby="search" @bind="searchTerm" @bind:event="oninput" />
             </div>
-            @foreach (var model in digitalModels)
+            @foreach (var model in digitalModel)
             {
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                     <div class="card">
@@ -40,7 +40,7 @@ else
     @foreach (var digitalmodel in FilteredModels)
     {
         <div class="col">
-           <StoreItem DigitalModels="digitalmodels" />
+           <StoreItem DigitalModels="digitalModels" />
         </div>
     }
 
@@ -55,44 +55,35 @@ else
 
 @code
 {
-    private IEnumerable<DigitalModel> digitalModels;
+
+    private IEnumerable<DigitalModel> digitalModel;
     private string searchTerm = "";
-
-
-
-    private bool GetSearchCriteria(DigitalModel digitalModel)
-    {
-        return digitalModel.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-        || digitalModel.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
-    }
     private SortCriteria sortCriteria = SortCriteria.Title;
 
-
-
-
-    private IEnumerable<DigitalModel> filteredmodels;
+    //returns the models which have a corrosponding name or category
+    private IEnumerable<DigitalModel> filteredModels;
     private IEnumerable<DigitalModel> FilteredModels
     {
         get
         {
-            return filteredmodels.Where(GetSearchCriteria);
+            return filteredModels.Where(GetSearchCriteria);
         }
         set
         {
-            filteredmodels = value;
+            filteredModels = value;
         }
     }
 
 
-
-
-    private bool GetSearchCriteria (DigitalModel model)
+    //checks if the search item relates to any model which has been uploaded
+    private bool GetSearchCriteria(DigitalModel model)
     {
         if (string.IsNullOrWhiteSpace(searchTerm)) return true;
 
-        return model.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-             || model.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+        return digitalModel.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || digitalModel.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
     }
+
 
 
 
@@ -100,12 +91,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        digitalModels = await ModelProvider.GetAllModelsAsync();
+        digitalModel = await ModelProvider.GetAllModelsAsync();
+        filteredModels = digitalModel;
+        StateHasChanged(); 
+
     }
 
     private void GoToModelPage(int modelId)
     {
-        NavigationManager.NavigateTo("/ModelPage/{modelId}");
+        NavigationManager.NavigateTo($"/ModelPage/{modelId}");
     }
 
 
@@ -114,10 +108,11 @@ else
     private void Sort(SortCriteria criteria)
     {
         sortCriteria = criteria;
-        filteredmodels = criteria switch
+        filteredModels = criteria switch
         {
-            SortCriteria.Title => FilteredModels = filteredmodels.OrderBy(c => c.Title),
-            SortCriteria.Category => FilteredModels = filteredmodels.OrderBy(c => c.Category), _ => filteredmodels
+            SortCriteria.Title => FilteredModels = filteredModels.OrderBy(c => c.Title),
+            SortCriteria.Category => FilteredModels = filteredModels.OrderBy(c => c.Category), 
+            _ => filteredModels
         };
     }
 
