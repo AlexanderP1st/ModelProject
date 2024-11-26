@@ -8,7 +8,7 @@
 <PageTitle>AP Models</PageTitle>
 
 @*Checks if models have been uploaded*@
-@if (digitalModel == null || !digitalModel.Any())
+@if (digitalmodel == null || !digitalmodel.Any())
 {
     <p>No models uploaded yet.</p>
 }
@@ -21,7 +21,7 @@ else
                 <span class="input-group-text" id="search">Search</span>
                 <input type="text" class="form-control" placeholder="Search for models..." aria-label="Search" aria-describedby="search" @bind="searchTerm" @bind:event="oninput" />
             </div>
-            @foreach (var model in digitalModel)
+            @foreach (var model in digitalmodel)
             {
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                     <div class="card">
@@ -56,7 +56,7 @@ else
 @code
 {
 
-    private IEnumerable<DigitalModel> digitalModel;
+    private IEnumerable<DigitalModel> digitalmodel;
     private string searchTerm = "";
     private SortCriteria sortCriteria = SortCriteria.Title;
 
@@ -76,12 +76,12 @@ else
 
 
     //checks if the search item relates to any model which has been uploaded
-    private bool GetSearchCriteria(DigitalModel model)
+    private bool GetSearchCriteria(DigitalModel digitalmodel)
     {
         if (string.IsNullOrWhiteSpace(searchTerm)) return true;
 
-        return digitalModel.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-             || digitalModel.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+        return digitalmodel.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || digitalmodel.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
     }
 
 
@@ -91,8 +91,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        digitalModel = await ModelProvider.GetAllModelsAsync();
-        filteredModels = digitalModel;
+        digitalmodel = await ModelProvider.GetAllModelsAsync();
+        filteredModels = digitalmodel;
         StateHasChanged(); 
 
     }
