@@ -1,27 +1,45 @@
 ﻿@page "/ModelPage/{id:int}"
 @using ModelProject.Context
 @using ModelProject.Model
+@inject ModelProvider ModelProvider 
 @inject NavigationManager NavigationManager
 
  <div class="container">
        <div class="row">
-           @foreach(var model in digitalModels)
+           @foreach(var digitalModel in digitalmodels)
             {
              <div class="m-3">
                  <div class="card">
-                     <h5 class="card-text">@model.Title</h5>
-                     <p class="card-text">@model.Description</p>
-                     <p class="card-text">@model.Category</p>
-                     <p class="card-text">@model.Specifications</p>
+                     <p> class="card-text">@digitalmodel.User</p>
+                     <h5 class="card-text">@digitalmodel.Title</h5>
+                     <p class="card-text">@digitalmodel.Description</p>
+                     <p class="card-text">@digitalmodel.Category</p>
+                     <p class="card-text">@digitalmodel.Specifications</p>
                  </div>
              </div>
             }
        </div>
 </div>
 <h5>Hello this is the model page</h5>
+
 @code
 {
-    private IEnumerable<DigitalModel> digitalModels;
+    private IEnumerable<DigitalModel> digitalmodels;
 
+    [Parameter]
+    public int id { get; set; }
+
+    private DigitalModel selectedModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var allModels = await ModelProvider.GetAllModelsAsync();
+        selectedModel = allModels.FirstOrDefault(m => m.Id == id);
+
+        if (selectedModel == null)
+        {
+            Console.WriteLine($"Model with ID {id} not found"); 
+        }
+    }
 
 }
