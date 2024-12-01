@@ -1,45 +1,93 @@
-﻿@page "/ModelPage/{id:int}"
-@using ModelProject.Context
+﻿@page "/ModelPage/{ModelId:int}"
 @using ModelProject.Model
-@inject ModelProvider ModelProvider 
+@inject ModelProvider ModelProvider
 @inject NavigationManager NavigationManager
 
- <div class="container">
-       <div class="row">
-           @foreach(var digitalModel in digitalmodels)
-            {
-             <div class="m-3">
-                 <div class="card">
-                     <p> class="card-text">@digitalmodel.User</p>
-                     <h5 class="card-text">@digitalmodel.Title</h5>
-                     <p class="card-text">@digitalmodel.Description</p>
-                     <p class="card-text">@digitalmodel.Category</p>
-                     <p class="card-text">@digitalmodel.Specifications</p>
-                 </div>
-             </div>
-            }
-       </div>
-</div>
-<h5>Hello this is the model page</h5>
+<PageTitle>Model Details</PageTitle>
 
-@code
+@if (digitalModel == null)
 {
-    private IEnumerable<DigitalModel> digitalmodels;
+    <p>Loading model details...</p>
+}
+else
+{
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @foreach (var image in imageFiles)
+                        {
+                            <div class="carousel-item @(image == imageFiles.First() ? "active" : "")">
+                                <img src="@image" class="d-block w-100" alt="@digitalModel.Title Image">
+                            </div>
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h1>@digitalModel.Title</h1>
+                <p><strong>Category:</strong> @digitalModel.Category</p>
+                <p><strong>Specifications:</strong> @digitalModel.Specifications</p>
+                <p><strong>Description:</strong> @digitalModel.Description</p>
+                <p><strong>Downloads:</strong> @digitalModel.Downloads</p>
+                <p><strong>File Size:</strong> @digitalModel.FileSize MB</p>
+                <button @onclick="DownloadModel" class="btn btn-primary">Download Model</button>
+                @*Redirects the user to the homepage if they press the button*@
+                <button @onclick="NavigateToHome" class="btn btn-secondary ms-2">Back to Home</button>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <h4>Available Model Files</h4>
+            <ul>
+                @*Shows the available files (files uploaded by the user) *@
+                @foreach (var file in modelFiles)
+                {
+                    <li><a href="@file" target="_blank">@file</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+}
 
+@code {
     [Parameter]
-    public int id { get; set; }
+    public int ModelId { get; set; }
 
-    private DigitalModel selectedModel;
+    private DigitalModel? digitalModel;
+    private List<string> imageFiles = new();
+    private List<string> modelFiles = new();
 
     protected override async Task OnInitializedAsync()
     {
-        var allModels = await ModelProvider.GetAllModelsAsync();
-        selectedModel = allModels.FirstOrDefault(m => m.Id == id);
-
-        if (selectedModel == null)
+        digitalModel = await ModelProvider.GetModelByIdAsync(ModelId);
+        if (digitalModel != null)
         {
-            Console.WriteLine($"Model with ID {id} not found"); 
+            imageFiles = digitalModel.Images.Split(',').ToList();
+            modelFiles = digitalModel.ModelFiles.Split(',').ToList();
         }
     }
 
+    private void DownloadModel()
+    {
+        if (digitalModel != null)
+        {
+            digitalModel.Downloads++;
+            ModelProvider.UpdateModelAsync(digitalModel);
+            NavigationManager.NavigateTo($"/ModelFiles/{digitalModel.ModelFiles}", true);
+        }
+    }
+
+    private void NavigateToHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
 }

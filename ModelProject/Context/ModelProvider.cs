@@ -58,4 +58,10 @@ public class ModelProvider
         return await _context.DigitalModels.ToListAsync();
     }
 
+    public async Task<DigitalModel?> GetModelByIdAsync(int id)
+    {
+        return await _context.DigitalModels
+                             .Include(m => m.User)
+                             .FirstOrDefaultAsync(m => m.Id == id);
+    }
 }
