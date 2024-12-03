@@ -14,11 +14,13 @@
 @*Checks if the user is signed in*@
 <AuthorizeView>
     <Authorized Context="Auth">
+        
+        
         <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
             <h5>Upload Page</h5>
             <form class="row g-3 needs-validation" novalidate>
 
-                <h3 class="custom-primary">@User.UserName</h3>
+                
 
                 @*Allows the user to input a Model Name:*@
                 <div class="col-md-4 position-relative">
@@ -128,7 +130,7 @@
 
     private List<string> modelFilePaths = new();
     private List<string> imageFilePaths = new();
-    private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character" };
+    private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character"};
     private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
 
     private async Task HandleSubmit()
@@ -158,7 +160,7 @@
     }
 
 
-
+    
 
     private void SelectCategory(string category)
     {

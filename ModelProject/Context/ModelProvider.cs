@@ -30,6 +30,7 @@ public class ModelProvider
         var filePath = Path.Combine(uploadPath, fileName);
 
         using (var fileStream = new FileStream(filePath, FileMode.Create))
+
         {
             await file.OpenReadStream().CopyToAsync(fileStream);
         }

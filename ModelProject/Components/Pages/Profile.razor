@@ -1,6 +1,13 @@
 ﻿@page "/Profile"
-@using Microsoft.AspNetCore.Identity
+
 @using ModelProject.Model
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.ComponentModel.DataAnnotations
+@using System.IO;
+@using Microsoft.AspNetCore.Components.Forms;
+
 @inject ModelProvider ModelProvider
 @inject NavigationManager Navigation
 @inject NavigationManager NavigationManager
@@ -12,6 +19,7 @@
     <Authorized>
         <h1 class="mt-4">My Uploaded Models</h1>
         
+        
         @if (userModels == null)
         {
             <p>Loading your models...</p>
@@ -22,6 +30,7 @@
         }
         else
         {
+            
             <div class="row">
                 @foreach (var model in userModels)
                 {
@@ -51,7 +60,7 @@
         <li class="nav-item">
             <button class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
         </li>
-     </div>
+      </div>
     </NotAuthorized>
 </AuthorizeView>
 @code
@@ -59,7 +68,7 @@
     private string? username; 
     private List<DigitalModel>? userModels;
 
-    protected override async Task OnInitializedAsync()
+    @*protected override async Task OnInitializedAsync()
     {
         var user = await UserManager.GetUserAsync(AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User);
         if (user != null)
@@ -68,7 +77,7 @@
 
             userModels = await ModelProvider.GetUserModelsAsync(user.Id);
         }
-    }
+    }*@
 
     private string GetFirstImage(string images)
     {
