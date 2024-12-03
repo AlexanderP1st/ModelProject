@@ -1,4 +1,5 @@
-﻿﻿@using ModelProject.Model
+﻿@using ModelProject.Context
+﻿@using ModelProject.Model
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Components.Authorization
@@ -10,18 +11,15 @@
 @inject ModelProvider ModelProvider
 @inject NavigationManager Navigation
 @inject NavigationManager NavigationManager
+@inject FileUploader FileUploader
 
 @*Checks if the user is signed in*@
 <AuthorizeView>
     <Authorized Context="Auth">
         
-        
         <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
             <h5>Upload Page</h5>
-            <form class="row g-3 needs-validation" novalidate>
-
-                
-
+            
                 @*Allows the user to input a Model Name:*@
                 <div class="col-md-4 position-relative">
                     <label for="validationTooltip01" class="form-label">Model Name:</label>
@@ -38,11 +36,6 @@
 
                 </div>
 
-                @*Allows the user to input images of a 3D model*@
-                <div class="mb-3">
-                    <label for="=" formFile" class="form-label">Please Input Images of the 3D Model</label>
-                    <InputText class="form-control" @bind-Value="Model.Images" type="file" id="formFile" accept=".jpeg,.png" multiple />
-                </div>
 
                 @*Allows the user to input a description*@
                 <div class="input-group mb-3">
@@ -87,7 +80,24 @@
                 </div>
 
                 <a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
-            </form>
+
+               @*Allows the user to input images of a 3D model*@
+                <div class="col-lg-6 col-12 mt-1">
+                   <div class="card h-100">
+                       <div class="card-body bg-light d-flex flex-column">
+                        <h4 class="card-title">Model image</h4>
+                        <div class="form-group mb-2">
+                            <InputFile id="imageUrl" class="form-control" @bind-Value="@Model.ImageUrl" OnChange="LoadFile" />
+                            <div class="small">
+                                <ValidationMessage For="@(() => Model.ImageUrl)" />
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <img src="/img/digitalmodels/@Model.ImageUrl" class="img-thumbnail" alt="@Model.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
+                        </div>
+                       </div>
+                   </div>
+                </div>
         </EditForm>
     </Authorized>
 
@@ -123,7 +133,7 @@
     private string specifications;
     private string selectedCategory;
     private string selectedFormat;
-    private string[] images = [];
+    private string[] imageUrl = [];
     private string[] modelFiles = [];
     private string fileformat;
     private string category;
@@ -140,7 +150,7 @@
         digitalmodel.Title = Model.Title;
         digitalmodel.Description = Model.Description;
         digitalmodel.ModelFiles = Model.ModelFiles;
-        digitalmodel.Images = Model.Images;
+        digitalmodel.ImageUrl = Model.ImageUrl;
         digitalmodel.Specifications = Model.Specifications;
 
         if (digitalmodel.Id == 0)
@@ -160,7 +170,17 @@
     }
 
 
-    
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        var filename = await FileUploader.UploadFileAsync(e.File);
+        if (filename is null)
+        {
+            Model.ImageUrl = null;
+            return;
+        }
+
+        Model.ImageUrl = filename;
+    }
 
     private void SelectCategory(string category)
     {
@@ -183,7 +203,7 @@
     private async Task OnImageSelected(ChangeEventArgs e)
     {
         var files = e.Value as IEnumerable<IBrowserFile>;
-        images = files.Select(f => f.Name).ToArray();
+        imageUrl = files.Select(f => f.Name).ToArray();
     }
 
 
@@ -235,7 +255,7 @@
 
 
         [Required(ErrorMessage = "At least one image is required.")]
-        public string Images { get; set; } = "";
+        public string ImageUrl { get; set; } = "";
 
         [Required(ErrorMessage = "Category is required.")]
         public string Category { get; set; } = "";
@@ -255,7 +275,7 @@
         {
             Title = digitalModel.Title;
             ModelFiles = digitalModel.ModelFiles;
-            Images = digitalModel.Images;
+            ImageUrl = digitalModel.ImageUrl;
             Category = digitalModel.Category;
             Description = digitalModel.Description;
             Specifications = digitalModel.Specifications;

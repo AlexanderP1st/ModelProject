@@ -17,10 +17,8 @@ namespace ModelProject.Model
         [MinLength(1, ErrorMessage = "Please upload at least one model file.")]
         public string ModelFiles { get; set; }
 
-
-        [Required(ErrorMessage = "At least one image is required.")]
-        [MinLength(1, ErrorMessage = "Please upload at least one image file")]
-        public string Images { get; set; }
+        [Required]
+        public string? ImageUrl { get; set; }
 
         [Required(ErrorMessage = "Category is required.")]
         public string Category { get; set; }

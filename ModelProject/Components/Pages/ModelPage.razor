@@ -68,7 +68,7 @@ else
         digitalModel = await ModelProvider.GetModelByIdAsync(ModelId);
         if (digitalModel != null)
         {
-            imageFiles = digitalModel.Images.Split(',').ToList();
+            imageFiles = digitalModel.ImageUrl.Split(',').ToList();
             modelFiles = digitalModel.ModelFiles.Split(',').ToList();
         }
     }
