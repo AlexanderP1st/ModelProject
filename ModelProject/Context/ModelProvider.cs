@@ -1,16 +1,13 @@
 ﻿using ModelProject.Model;
-using SQLitePCL;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using ModelProject.Context;
 using Microsoft.AspNetCore.Components.Forms;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.AspNetCore.Hosting; 
+
+
 public class ModelProvider
 {
     private readonly DatabaseContext _context;
-   
+    
 
     public ModelProvider(DatabaseContext context)
     {
@@ -64,4 +61,12 @@ public class ModelProvider
                              .Include(m => m.User)
                              .FirstOrDefaultAsync(m => m.Id == id);
     }
+
+    public async Task<List<DigitalModel>> GetUserModelsAsync(string userId)
+    {
+        return await _context.DigitalModels
+            .Where(mbox => mbox.User.Id == userId)
+            .ToListAsync(); 
+    }
+
 }
