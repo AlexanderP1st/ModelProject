@@ -34,14 +34,14 @@
                 @*Allows the user to input the Files of a 3D model*@
                 <div class="mb-3">
                     <label for="=" formFile" class="form-label">Please Input The Model Files</label>
-                    <InputText class="form-control" @bind-Value="Model.ModelFiles" type="file" id="formFile" accept=".obj,.fbx,.stl,.gltf,.glb" required />
+                    <InputText class="form-control" @bind-Value="Model.ModelFiles" type="file" id="formFile" accept=".obj,.stl,.gltf,.glb" required />
 
                 </div>
 
                 @*Allows the user to input images of a 3D model*@
                 <div class="mb-3">
                     <label for="=" formFile" class="form-label">Please Input Images of the 3D Model</label>
-                    <InputText class="form-control" @bind-Value="Model.Images" type="file" id="formFile" accept=".jpf,.jpeg,.png" multiple />
+                    <InputText class="form-control" @bind-Value="Model.Images" type="file" id="formFile" accept=".jpeg,.png" multiple />
                 </div>
 
                 @*Allows the user to input a description*@
@@ -209,6 +209,8 @@
         }
         Model.Images = string.Join(",", imageFilePaths);
     }*@
+
+
 
     @*Navigation to Login and Register page from Upload Page*@
     private void NavigateToLogin()
