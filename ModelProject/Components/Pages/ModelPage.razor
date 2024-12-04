@@ -19,11 +19,9 @@ else
                     <div class="carousel-inner">
                         
                         @*path to display image of the model*@
-                        @foreach (var image in imageFiles)
+                        @foreach (var ImageUrl in imageFiles)
                         {
-                            <div class="carousel-item @(image == imageFiles.First() ? "active" : "")">
-                                <img src="@image" class="d-block w-100" alt="@digitalModel.Title Image">
-                            </div>
+                            <img src="/img/digitalmodels/@digitalModel.ImageUrl" class="img-thumbnail" alt="@digitalModel.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
                         }
                     </div>
                     
@@ -58,6 +56,7 @@ else
 @code {
     [Parameter]
     public int ModelId { get; set; }
+    private string[] imageUrl = [];
 
     private DigitalModel? digitalModel;
     private List<string> imageFiles = new();
