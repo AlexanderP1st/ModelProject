@@ -12,14 +12,17 @@
 @inject NavigationManager Navigation
 @inject NavigationManager NavigationManager
 @inject FileUploader FileUploader
+@inject UserManager<User> userManager;
 
 @*Checks if the user is signed in*@
 <AuthorizeView>
     <Authorized Context="Auth">
-        
+     
         <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
             <h5>Upload Page</h5>
-            
+
+               
+
                 @*Allows the user to input a Model Name:*@
                 <div class="col-md-4 position-relative">
                     <label for="validationTooltip01" class="form-label">Model Name:</label>
@@ -28,6 +31,25 @@
                         Perfect
                     </div>
                 </div>
+
+
+            @*Allows the user to input images of a 3D model*@
+            <div class="col-lg-6 col-12 mt-1">
+                <div class="card h-100">
+                    <div class="card-body bg-light d-flex flex-column">
+                        <h4 class="card-title">Model image (JPG/ JPEG)</h4>
+                        <div class="form-group mb-2">
+                            <InputFile id="imageUrl" class="form-control" @bind-Value="@Model.ImageUrl" OnChange="LoadFile" />
+                            <div class="small">
+                                <ValidationMessage For="@(() => Model.ImageUrl)" />
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <img src="/img/digitalmodels/@Model.ImageUrl" class="img-thumbnail" alt="@Model.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
                 @*Allows the user to input the Files of a 3D model*@
                 <div class="mb-3">
@@ -77,26 +99,6 @@
                             <option value="@ff">@ff</option>
                         }
                     </InputSelect>
-                </div>
-
-               
-
-               @*Allows the user to input images of a 3D model*@
-                <div class="col-lg-6 col-12 mt-1">
-                   <div class="card h-100">
-                       <div class="card-body bg-light d-flex flex-column">
-                        <h4 class="card-title">Model image</h4>
-                        <div class="form-group mb-2">
-                            <InputFile id="imageUrl" class="form-control" @bind-Value="@Model.ImageUrl" OnChange="LoadFile" />
-                            <div class="small">
-                                <ValidationMessage For="@(() => Model.ImageUrl)" />
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <img src="/img/digitalmodels/@Model.ImageUrl" class="img-thumbnail" alt="@Model.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
-                        </div>
-                       </div>
-                   </div>
                 </div>
 
                 <a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
@@ -149,6 +151,7 @@
     {
         var digitalmodel = DigitalModel ?? new DigitalModel();
 
+        digitalmodel.User = Model.User;
         digitalmodel.Title = Model.Title;
         digitalmodel.Description = Model.Description;
         digitalmodel.ModelFiles = Model.ModelFiles;
@@ -247,6 +250,7 @@
 
     public sealed class UserModelUpload
     {
+        public string User { get; set; } = "";
 
         [Required(ErrorMessage = "Model title is required.")]
         public string Title { get; set; } = "";
@@ -275,6 +279,7 @@
 
         public UserModelUpload(DigitalModel digitalModel)
         {
+            
             Title = digitalModel.Title;
             ModelFiles = digitalModel.ModelFiles;
             ImageUrl = digitalModel.ImageUrl;
