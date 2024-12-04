@@ -165,7 +165,7 @@ namespace ModelProject.Migrations
                     UserId = table.Column<string>(type: "TEXT", nullable: true),
                     Title = table.Column<string>(type: "TEXT", maxLength: 15, nullable: false),
                     ModelFiles = table.Column<string>(type: "TEXT", nullable: false),
-                    Images = table.Column<string>(type: "TEXT", nullable: false),
+                    ImageUrl = table.Column<string>(type: "TEXT", nullable: false),
                     Category = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
                     Specifications = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
