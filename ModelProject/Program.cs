@@ -21,6 +21,7 @@ builder.Services.AddScoped<UserProvider>();
 builder.Services.AddScoped<ModelProvider>();
 builder.Services.AddScoped<DatabaseSeeder>();
 builder.Services.AddScoped<FileUploader>();
+builder.Services.AddScoped<ModelFileProvider>();
 
 
 

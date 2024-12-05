@@ -7,7 +7,7 @@ namespace ModelProject.Context
     {
         private readonly IWebHostEnvironment _environment;
         //Maximum allowed file size in bytes (5MB) 
-        private const long MAX_FILE_SIZE = 1024 * 1024 * 5;
+        private const long MaximumFileSize = 1024 * 1024 * 5;
         //types of file allowed to upload 
         private readonly string[] _allowedExtensions = [".jpg", ".jpeg", ".png"];
 
@@ -27,12 +27,12 @@ namespace ModelProject.Context
             var filePath = Path.Combine(imagesFolder, fileName);
             var fileExtension = Path.GetExtension(file.Name);
 
-            //rejects models over the MAX_FILE_SIZE (5MB) 
-            if (file.Size > MAX_FILE_SIZE) return null;
+            //rejects models over the MaximumFileSize (5MB) 
+            if (file.Size > MaximumFileSize) return null;
             if (!_allowedExtensions.Contains(fileExtension)) return null;
 
             using var stream = new FileStream(filePath, FileMode.Create);
-            await file.OpenReadStream(MAX_FILE_SIZE).CopyToAsync(stream);
+            await file.OpenReadStream(MaximumFileSize).CopyToAsync(stream);
 
             return fileName;
         }
