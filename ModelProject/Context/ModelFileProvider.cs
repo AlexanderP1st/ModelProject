@@ -11,7 +11,7 @@ public class ModelFileProvider
         _httpClient = httpClient;
     }
 
-    public async Task UploadModelAsync(IBrowserFile file, string uploadUrl)
+    public async Task UploadModelFileAsync(IBrowserFile file, string uploadUrl)
     {
         using (var content = new MultipartFormDataContent())
         {
@@ -25,7 +25,7 @@ public class ModelFileProvider
             }
         }
     }
-    public async Task DownloadFileAsync(string fileUrl)
+    public async Task DownloadModelFileAsync(string fileUrl)
     {
         var response = await _httpClient.GetAsync(fileUrl);
         if (!response.IsSuccessStatusCode)

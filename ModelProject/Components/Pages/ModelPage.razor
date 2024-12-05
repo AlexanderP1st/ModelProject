@@ -2,6 +2,7 @@
 @using ModelProject.Model
 @inject ModelProvider ModelProvider
 @inject NavigationManager NavigationManager
+@inject ModelFileProvider ModelFileProvider
 
 <PageTitle>Model Details</PageTitle>
 
@@ -35,7 +36,8 @@ else
                 <p><strong>Description:</strong> @digitalModel.Description</p>
                 <p><strong>Downloads:</strong> @digitalModel.Downloads</p>
                 <p><strong>File Size:</strong> @digitalModel.FileSize MB</p>
-                <button @onclick="DownloadModel" class="btn btn-primary">Download Model</button>
+                <button @onclick="DownloadModelFile">Download Model</button>
+
                 @*Redirects the user to the homepage if they press the button*@
                 <button @onclick="NavigateToHome" class="btn btn-secondary ms-2">Back to Home</button>
             </div>
@@ -61,6 +63,19 @@ else
     private DigitalModel? digitalModel;
     private List<string> imageFiles = new();
     private List<string> modelFiles = new();
+
+    private async Task DownloadModelFile()
+    {
+        try
+        {
+            await ModelFileProvider.DownloadModelFileAsync("/api/modelfile/download/modelfile");
+
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {

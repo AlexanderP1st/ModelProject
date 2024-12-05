@@ -59,6 +59,9 @@
 
                 </div>
 
+                <InputFile OnChange="HandleFileSelected" />
+
+
 
                 @*Allows the user to input a description*@
                 <div class="input-group mb-3">
@@ -147,6 +150,34 @@
     private List<string> imageFilePaths = new();
     private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character"};
     private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
+
+    private IBrowserFile selectedFile;
+
+    //handles the file selection 
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+    }
+
+    private async Task UploadModelFile()
+    {
+        if (selectedFile != null)
+        {
+            try
+            {
+                await ModelFileProvider.UploadModelFileAsync(selectedFile, "/api/modelfile/upload");
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+            }
+        }
+        else
+        {
+            Console.Error.WriteLine("No file selected");
+        }
+
+    }
 
     private async Task HandleSubmit()
     {
