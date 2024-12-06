@@ -56,9 +56,20 @@
 
                 @*Allows the user to input the Files of a 3D model*@
             <div class="mb-4">
-                <label for="modelFileUpload" class="form-label">Upload Model File</label>
-                <InputFile id="modelFileUpload" OnChange="HandleSubmit" accept=".stl,.obj,.gltf,.glb" />
-               
+                <label for="modelFileUpload" class="form-label">Upload 3D Model File (.stl only)</label>
+                <InputFile id="modelFileUpload" OnChange="HandleFileSelected" accept=".stl" />
+                @if (!string.IsNullOrEmpty(uploadedModelFileName))
+                {
+                    <p class="text-success mt-2">File Uploaded: @uploadedModelFileName</p>
+                }
+                else if (fileUploadError != null)
+                {
+                    <p class="text-danger mt-2">@fileUploadError</p>
+                }
+                else
+                {
+                    <p class="text-muted mt-2">No file uploaded yet.</p>
+                }
             </div>
 
                 
@@ -155,11 +166,55 @@
     private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
 
     private IBrowserFile selectedFile;
+    private string uploadedModelFileName = string.Empty; 
+    private string? fileUploadError = null; 
+    private const long MaxFileSize = 50 * 1024 * 1024;
 
     //handles the file selection 
-    private void HandleFileSelected(InputFileChangeEventArgs e)
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
-        selectedFile = e.File;
+        fileUploadError = null;
+        var file = e.File; 
+
+        if (file != null)
+        {
+            var fileExtension = Path.GetExtension(file.Name).ToLower();
+            if (fileExtension != ".stl")
+            {
+                fileUploadError = "Only .stl files are allowed.";
+                uploadedModelFileName = string.Empty;
+                return; 
+            }
+
+            try
+            {
+                var uploadFolder = Path.Combine("wwwroot", "uploads", "models"); // Save location
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+
+                var filePath = Path.Combine(uploadFolder, file.Name);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.OpenReadStream().CopyToAsync(stream); 
+                }
+
+                uploadedModelFileName = file.Name;
+
+                Model.ModelFiles = $"/uploads/models/{file.Name}";
+            }
+            catch (Exception ex)
+            {
+                fileUploadError = $"Error uploading file: {ex.Message}";
+            }
+        }
+        else
+        {
+            fileUploadError = "No file selected.";
+        }
+
     }
 
 
@@ -245,19 +300,6 @@
         NavigationManager.NavigateTo("/");
 
     }
-
-    @*Working on uploading an image
-    private async Task OnImageSelected(InputFileChangeEventArgs e)
-    {
-        var files = e.GetMultipleFiles();
-        foreach(var file in files)
-        {
-            var imageUrl = await SaveFileAsync(file);
-            imageFilePaths.Add(imageUrl);
-        }
-        Model.Images = string.Join(",", imageFilePaths);
-    }*@
-
 
 
     @*Navigation to Login and Register page from Upload Page*@
