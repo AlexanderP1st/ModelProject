@@ -7,6 +7,7 @@
 @using System.IO;
 @using Microsoft.AspNetCore.Components.Forms; 
 
+
 @page "/Upload"
 @inject ModelProvider ModelProvider
 @inject NavigationManager Navigation
@@ -14,6 +15,7 @@
 @inject FileUploader FileUploader
 @inject UserManager<User> userManager;
 @inject ModelFileProvider ModelFileProvider
+
 
 @*Checks if the user is signed in*@
 <AuthorizeView>
@@ -53,13 +55,14 @@
             </div>
 
                 @*Allows the user to input the Files of a 3D model*@
-                <div class="mb-3">
-                    <label for="=" formFile" class="form-label">Please Input The Model Files</label>
-                    <InputText class="form-control" @bind-Value="Model.ModelFiles" type="file" id="formFile" accept=".obj,.stl,.gltf,.glb" required />
+            <div class="mb-4">
+                <label for="modelFileUpload" class="form-label">Upload Model File</label>
+                <InputFile id="modelFileUpload" OnChange="HandleSubmit" accept=".stl,.obj,.gltf,.glb" />
+               
+            </div>
 
-                </div>
-
-                <InputFile OnChange="HandleFileSelected" />
+                
+              
 
 
 
@@ -159,28 +162,16 @@
         selectedFile = e.File;
     }
 
-    private async Task UploadModelFile()
-    {
-        if (selectedFile != null)
-        {
-            try
-            {
-                await ModelFileProvider.UploadModelFileAsync(selectedFile, "/api/modelfile/upload");
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine(ex.Message);
-            }
-        }
-        else
-        {
-            Console.Error.WriteLine("No file selected");
-        }
 
-    }
 
     private async Task HandleSubmit()
     {
+        if (selectedFile != null)
+        {
+            var filePath = await ModelFileProvider.SaveModelFileAsync(selectedFile);
+            Model.ModelFiles = filePath;
+        }
+
         var digitalmodel = DigitalModel ?? new DigitalModel();
 
         digitalmodel.User = Model.User;

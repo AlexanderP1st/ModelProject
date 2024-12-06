@@ -1,39 +1,55 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
-using System.Net.Http;
+using Microsoft.EntityFrameworkCore;
+using ModelProject.Model;
+using SQLitePCL;
+using System.IO;
+using ModelProject.Context;
 
 public class ModelFileProvider
- {
-    private readonly HttpClient httpClient;
-    private HttpClient _httpClient;
+{
+    private readonly string uploadsFolder;
+    private readonly DatabaseContext _context;
 
-    public ModelFileProvider(HttpClient httpClient)
+
+    public ModelFileProvider(DatabaseContext context)
     {
-        _httpClient = httpClient;
+        _context = context; 
     }
 
-    public async Task UploadModelFileAsync(IBrowserFile file, string uploadUrl)
+    public ModelFileProvider()
     {
-        using (var content = new MultipartFormDataContent())
-        {
-            var fileContent = new StreamContent(file.OpenReadStream());
-            content.Add(fileContent, "file", file.Name);
-
-            var response = await _httpClient.PostAsync(uploadUrl, content);
-            if(!response.IsSuccessStatusCode)
-            {
-                throw new Exception("File upload failed"); 
-            }
-        }
+        uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/models");
+        Directory.CreateDirectory(uploadsFolder);
     }
-    public async Task DownloadModelFileAsync(string fileUrl)
+
+    public async Task<string> SaveModelFileAsync(IBrowserFile file)
     {
-        var response = await _httpClient.GetAsync(fileUrl);
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new Exception("File download failed");
-        }
-        var fileContent = await response.Content.ReadAsStringAsync();
+        var filePath = Path.Combine(uploadsFolder, file.Name);
+        await using var stream = new FileStream(filePath, FileMode.Create);
+        await file.OpenReadStream(maxAllowedSize: 1024 * 1024 * 50).CopyToAsync(stream);
+        return $"uploads/models/{file.Name}";
+    }
+
+    public string GetDownloadLink(string relativePath)
+    {
+        return $"/{relativePath}";
+    }
+    
+    public async Task AddModelAsync(DigitalModel model)
+    {
+        _context.DigitalModels.Add(model);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<DigitalModel?> GetModelByIdAsync(int id)
+    {
+        return await _context.DigitalModels.FindAsync(id);
+    }
+
+    public async Task UpdateModelAsync(DigitalModel model)
+    {
+        _context.DigitalModels.Update(model);
+        await _context.SaveChangesAsync(); 
+
     }
 }
-
-  
