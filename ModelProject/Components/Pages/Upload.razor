@@ -1,7 +1,7 @@
 ﻿@using ModelProject.Context
 ﻿@using ModelProject.Model
-@using Microsoft.AspNetCore.Http
-@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Http @*Retrieving user Id*@
+@using Microsoft.AspNetCore.Identity @*Retrieving user Id*@
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.ComponentModel.DataAnnotations
 @using System.IO;
@@ -15,6 +15,8 @@
 @inject FileUploader FileUploader
 @inject UserManager<User> userManager;
 @inject ModelFileProvider ModelFileProvider
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserProvider UserProvider
 
 
 @*Checks if the user is signed in*@
@@ -24,7 +26,8 @@
         <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
             <h5>Upload Page</h5>
 
-               
+
+
 
                 @*Allows the user to input a Model Name:*@
                 <div class="col-md-4 position-relative">
@@ -36,9 +39,9 @@
                 </div>
 
 
-            @*Allows the user to input images of a 3D model*@
-            <div class="col-lg-6 col-12 mt-1">
-                <div class="card h-100">
+               @*Allows the user to input images of a 3D model*@
+               <div class="col-lg-6 col-12 mt-1">
+                  <div class="card h-100">
                     <div class="card-body bg-light d-flex flex-column">
                         <h4 class="card-title">Model image (JPG/ JPEG)</h4>
                         <div class="form-group mb-2">
@@ -51,8 +54,8 @@
                             <img src="/img/digitalmodels/@Model.ImageUrl" class="img-thumbnail" alt="@Model.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
                         </div>
                     </div>
-                </div>
-            </div>
+                   </div>
+               </div>
 
                 @*Allows the user to input the Files of a 3D model*@
             <div class="mb-4">
@@ -159,7 +162,7 @@
 
     private DigitalModel Model = new DigitalModel();
 
-
+    private string username; 
     private string description;
     private string specifications;
     private string selectedCategory;
@@ -168,16 +171,16 @@
     private string[] modelFiles = [];
     private string fileformat;
     private string category;
-
     private List<string> modelFilePaths = new();
     private List<string> imageFilePaths = new();
     private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character", "Object"};
     private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
-
     private IBrowserFile selectedFile;
     private string uploadedModelFileName = string.Empty; 
     private string? fileUploadError = null; 
     private const long MaxFileSize = 50 * 1024 * 1024;
+
+
 
     //handles the file selection 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
@@ -314,6 +317,10 @@
 
     }
 
+    protected async override Task OnInitializedAsync()
+    {
+        var user = UserProvider.GetUserByUsername(username);
+    }
 
     @*Navigation to Login and Register page from Upload Page*@
     private void NavigateToLogin()
@@ -370,5 +377,7 @@
             FileSize = digitalModel.FileSize;
         }
     }
+
+    
 
 }

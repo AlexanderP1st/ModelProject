@@ -16,6 +16,11 @@ public class ModelProvider
 
     }
 
+    public User? GetUserByUsername(string? username)
+    {
+        return _context.Users.FirstOrDefault(user => user.UserName == username);
+    }
+
     public async Task<string> SaveFileAsync(IBrowserFile file)
     {
         var fileName = $"{Guid.NewGuid()}_{file.Name}";
