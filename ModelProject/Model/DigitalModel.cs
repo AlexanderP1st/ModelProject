@@ -36,7 +36,7 @@ namespace ModelProject.Model
         public int Downloads { get; set; }
 
 
-        [Range(0, int.MaxValue, ErrorMessage = "File size cannot be negative.")]
-        public int FileSize { get; set; }
+        
+        public string FileSize { get; set; }
     }
 }

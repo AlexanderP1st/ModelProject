@@ -95,6 +95,15 @@
                     </div>
                 </div>
 
+                @*Allows the user to enter the file size*@
+                <div class="input-group mb-3">
+                      <span class="input-group-text" id="validationTooltip03">File size</span>
+                      <InputText class="form-control" @bind-Value="Model.FileSize" id="validationTooltip03" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
+                      <div class="valid-tooltip">
+                         Perfect
+                      </div>
+                </div>
+
                 @*Creates a dropdown for a user to select what catagory the model falls under*@
                 <label form="formFile" class="form-label">Please select the Category of your model</label>
                 <div class="btn-group">
@@ -162,7 +171,7 @@
 
     private List<string> modelFilePaths = new();
     private List<string> imageFilePaths = new();
-    private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character"};
+    private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character", "Object"};
     private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
 
     private IBrowserFile selectedFile;
@@ -181,6 +190,7 @@
             var fileExtension = Path.GetExtension(file.Name).ToLower();
             if (fileExtension != ".stl")
             {
+                //checks if the file is stl
                 fileUploadError = "Only .stl files are allowed.";
                 uploadedModelFileName = string.Empty;
                 return; 
@@ -188,7 +198,8 @@
 
             try
             {
-                var uploadFolder = Path.Combine("wwwroot", "uploads", "models"); // Save location
+                //saves the location 
+                var uploadFolder = Path.Combine("wwwroot", "uploads", "models");
                 if (!Directory.Exists(uploadFolder))
                 {
                     Directory.CreateDirectory(uploadFolder);
@@ -212,6 +223,7 @@
         }
         else
         {
+            //returns message if no files are sleceted
             fileUploadError = "No file selected.";
         }
 
@@ -235,6 +247,7 @@
         digitalmodel.ModelFiles = Model.ModelFiles;
         digitalmodel.ImageUrl = Model.ImageUrl;
         digitalmodel.Specifications = Model.Specifications;
+        digitalmodel.FileSize = Model.FileSize;
 
         if (digitalmodel.Id == 0)
         {
@@ -337,6 +350,9 @@
         [Required(ErrorMessage = "Specifications are required.")]
         public string Specifications { get; set; } = "";
 
+        [Required(ErrorMessage = "File size are required.")]
+        public string FileSize { get; set; } = "";
+
         public UserModelUpload()
         {
 
@@ -344,13 +360,14 @@
 
         public UserModelUpload(DigitalModel digitalModel)
         {
-            
+
             Title = digitalModel.Title;
             ModelFiles = digitalModel.ModelFiles;
             ImageUrl = digitalModel.ImageUrl;
             Category = digitalModel.Category;
             Description = digitalModel.Description;
             Specifications = digitalModel.Specifications;
+            FileSize = digitalModel.FileSize;
         }
     }
 

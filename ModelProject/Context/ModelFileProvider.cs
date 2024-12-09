@@ -7,6 +7,7 @@ using ModelProject.Context;
 
 public class ModelFileProvider
 {
+    //stores the path to a folder
     private readonly string uploadsFolder;
     private readonly DatabaseContext _context;
 
@@ -19,6 +20,7 @@ public class ModelFileProvider
     public ModelFileProvider()
     {
         uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/models");
+        //updates the folder for saving model files       
         Directory.CreateDirectory(uploadsFolder);
     }
 
@@ -30,6 +32,7 @@ public class ModelFileProvider
         return $"uploads/models/{file.Name}";
     }
 
+    //generates a download link based on the ralatvie path for the model files
     public string GetDownloadLink(string relativePath)
     {
         return $"/{relativePath}";
@@ -41,11 +44,13 @@ public class ModelFileProvider
         await _context.SaveChangesAsync();
     }
 
+    //retrieves the model record from the database
     public async Task<DigitalModel?> GetModelByIdAsync(int id)
     {
         return await _context.DigitalModels.FindAsync(id);
     }
 
+    //updates model record in the database
     public async Task UpdateModelAsync(DigitalModel model)
     {
         _context.DigitalModels.Update(model);

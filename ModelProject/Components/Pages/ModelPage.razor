@@ -80,7 +80,9 @@ else
         digitalModel = await ModelProvider.GetModelByIdAsync(ModelId);
         if (digitalModel != null)
         {
+            //increases downloads by one every click
             digitalModel.Downloads++;
+            //saves the clicks to the database
             ModelProvider.UpdateModelAsync(digitalModel);
             modelFiles = digitalModel.ModelFiles.Split(',').ToList();
             imageFiles = digitalModel.ImageUrl.Split(',').ToList();
