@@ -16,33 +16,28 @@ public class ModelProvider
 
     }
 
-    public User? GetUserByUsername(string? username)
+    public async Task<List<DigitalModel>> GetModelByUserAsync(User user)
     {
-        return _context.Users.FirstOrDefault(user => user.UserName == username);
-    }
-
-    public async Task<string> SaveFileAsync(IBrowserFile file)
-    {
-        var fileName = $"{Guid.NewGuid()}_{file.Name}";
-
-
-        var uploadPath = Path.Combine(_context.GetWebRootPath(), "uploads");
-
-        if (!Directory.Exists(uploadPath))
+        if (user == null)
         {
-            Directory.CreateDirectory(uploadPath); 
-        }
-        var filePath = Path.Combine(uploadPath, fileName);
-
-        using (var fileStream = new FileStream(filePath, FileMode.Create))
-
-        {
-            await file.OpenReadStream().CopyToAsync(fileStream);
+            return new List<DigitalModel>();
         }
 
-        return $"/uploads/{fileName}"; 
-
+        return await _context.DigitalModels
+            .Where(model => model.User.Id == user.Id)
+            .ToListAsync(); 
     }
+
+    public string GetUserByModel(DigitalModel model)
+    {
+        var users = _context.Users
+        .ToDictionary(user => user.Id, user => user.UserName);
+
+        return users[model.User.Id]; 
+    }
+
+
+
     public async Task AddModelAsync(DigitalModel model)
     {
         _context.DigitalModels.Add(model);
@@ -68,11 +63,6 @@ public class ModelProvider
                              .FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public async Task<List<DigitalModel>> GetUserModelsAsync(string userId)
-    {
-        return await _context.DigitalModels
-            .Where(mbox => mbox.User.Id == userId)
-            .ToListAsync(); 
-    }
+    
 
 }

@@ -1,11 +1,11 @@
-﻿@using ModelProject.Context
+﻿﻿@using ModelProject.Context
 ﻿@using ModelProject.Model
 @using Microsoft.AspNetCore.Http @*Retrieving user Id*@
 @using Microsoft.AspNetCore.Identity @*Retrieving user Id*@
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.ComponentModel.DataAnnotations
 @using System.IO;
-@using Microsoft.AspNetCore.Components.Forms; 
+@using Microsoft.AspNetCore.Components.Forms;
 
 
 @page "/Upload"
@@ -17,31 +17,32 @@
 @inject ModelFileProvider ModelFileProvider
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserProvider UserProvider
+@inject IHttpContextAccessor httpContextAccessor;
 
 
 @*Checks if the user is signed in*@
 <AuthorizeView>
     <Authorized Context="Auth">
-     
+
         <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
             <h5>Upload Page</h5>
 
 
 
 
-                @*Allows the user to input a Model Name:*@
-                <div class="col-md-4 position-relative">
-                    <label for="validationTooltip01" class="form-label">Model Name:</label>
-                    <InputText type="text" class="form-control" @bind-Value="Model.Title" id="validationTooltip01" required />
-                    <div class="valid-tooltip">
-                        Perfect
-                    </div>
+            @*Allows the user to input a Model Name:*@
+            <div class="col-md-4 position-relative">
+                <label for="validationTooltip01" class="form-label">Model Name:</label>
+                <InputText type="text" class="form-control" @bind-Value="Model.Title" id="validationTooltip01" required />
+                <div class="valid-tooltip">
+                    Perfect
                 </div>
+            </div>
 
 
-               @*Allows the user to input images of a 3D model*@
-               <div class="col-lg-6 col-12 mt-1">
-                  <div class="card h-100">
+            @*Allows the user to input images of a 3D model*@
+            <div class="col-lg-6 col-12 mt-1">
+                <div class="card h-100">
                     <div class="card-body bg-light d-flex flex-column">
                         <h4 class="card-title">Model image (JPG/ JPEG)</h4>
                         <div class="form-group mb-2">
@@ -54,10 +55,10 @@
                             <img src="/img/digitalmodels/@Model.ImageUrl" class="img-thumbnail" alt="@Model.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
                         </div>
                     </div>
-                   </div>
-               </div>
+                </div>
+            </div>
 
-                @*Allows the user to input the Files of a 3D model*@
+            @*Allows the user to input the Files of a 3D model*@
             <div class="mb-4">
                 <label for="modelFileUpload" class="form-label">Upload 3D Model File (.stl only)</label>
                 <InputFile id="modelFileUpload" OnChange="HandleFileSelected" accept=".stl" />
@@ -75,69 +76,69 @@
                 }
             </div>
 
-                
-              
 
 
 
-                @*Allows the user to input a description*@
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="validationTooltip02">Description:</span>
-                    <InputText class="form-control" @bind-Value="Model.Description" id="validationTooltip02" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
-                    <div class="valid-tooltip">
-                        Perfect
-                    </div>
+
+
+            @*Allows the user to input a description*@
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="validationTooltip02">Description:</span>
+                <InputText class="form-control" @bind-Value="Model.Description" id="validationTooltip02" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
+                <div class="valid-tooltip">
+                    Perfect
                 </div>
+            </div>
 
-                @*Allows the user to input Specifcations*@
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="validationTooltip03">Specifications</span>
-                    <InputText class="form-control" @bind-Value="Model.Specifications" id="validationTooltip03" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
-                    <div class="valid-tooltip">
-                        Perfect
-                    </div>
+            @*Allows the user to input Specifcations*@
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="validationTooltip03">Specifications</span>
+                <InputText class="form-control" @bind-Value="Model.Specifications" id="validationTooltip03" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
+                <div class="valid-tooltip">
+                    Perfect
                 </div>
+            </div>
 
-                @*Allows the user to enter the file size*@
-                <div class="input-group mb-3">
-                      <span class="input-group-text" id="validationTooltip03">File size</span>
-                      <InputText class="form-control" @bind-Value="Model.FileSize" id="validationTooltip03" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
-                      <div class="valid-tooltip">
-                         Perfect
-                      </div>
+            @*Allows the user to enter the file size*@
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="validationTooltip03">File size</span>
+                <InputText class="form-control" @bind-Value="Model.FileSize" id="validationTooltip03" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
+                <div class="valid-tooltip">
+                    Perfect
                 </div>
+            </div>
 
-                @*Creates a dropdown for a user to select what catagory the model falls under*@
-                <label form="formFile" class="form-label">Please select the Category of your model</label>
-                <div class="btn-group">
-                    <InputSelect id="categoryDropdown" class="form-select" @bind-Value="@category">
-                        <option value="">Select a Category</option>
-                        @foreach (var category in categories)
-                        {
-                            <option value="@category">@category</option>
-                        }
-                    </InputSelect>
-                </div>
+            @*Creates a dropdown for a user to select what catagory the model falls under*@
+            <label form="formFile" class="form-label">Please select the Category of your model</label>
+            <div class="btn-group">
+                <InputSelect id="categoryDropdown" class="form-select" @bind-Value="@category">
+                    <option value="">Select a Category</option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </InputSelect>
+            </div>
 
-                @*Creates a dropdown for a user to select what file format the model falls under*@
-                <label form="formFile" class="form-label">Please select the file format of your model</label>
-                <div class="btn-group">
-                    <InputSelect id="modelfilesDropdown" class="form-select" @bind-Value="@fileformat">
-                        <option value="">Select the File Format</option>
-                        @foreach (var ff in fileFormats)
-                        {
-                            <option value="@ff">@ff</option>
-                        }
-                    </InputSelect>
-                </div>
+            @*Creates a dropdown for a user to select what file format the model falls under*@
+            <label form="formFile" class="form-label">Please select the file format of your model</label>
+            <div class="btn-group">
+                <InputSelect id="modelfilesDropdown" class="form-select" @bind-Value="@fileformat">
+                    <option value="">Select the File Format</option>
+                    @foreach (var ff in fileFormats)
+                    {
+                        <option value="@ff">@ff</option>
+                    }
+                </InputSelect>
+            </div>
 
-                <a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
+            <a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
         </EditForm>
     </Authorized>
 
     @*Allows the user to either Login or Register*@
     <NotAuthorized>
-      <div class="card mb-3">
+        <div class="card mb-3">
             <h5>You are need an account to upload a model</h5>
         <li class="nav-item">
             <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
@@ -147,7 +148,7 @@
         <li class="nav-item">
             <button class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
         </li>
-     </div>
+        </div>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -156,15 +157,11 @@
 
 @code
 {
-    private User User { get; set; } = new();
-    [Parameter]
-    public DigitalModel? DigitalModel { get; set; }
+    private User UserId { get; set; }   
+    private DigitalModel DigitalModel { get; set; }
+    private List<DigitalModel> model; 
 
     private DigitalModel Model = new DigitalModel();
-
-    private string username; 
-    private string description;
-    private string specifications;
     private string selectedCategory;
     private string selectedFormat;
     private string[] imageUrl = [];
@@ -173,20 +170,34 @@
     private string category;
     private List<string> modelFilePaths = new();
     private List<string> imageFilePaths = new();
-    private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character", "Object"};
+    private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character", "Object" };
     private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
     private IBrowserFile selectedFile;
-    private string uploadedModelFileName = string.Empty; 
-    private string? fileUploadError = null; 
+    private string uploadedModelFileName = string.Empty;
+    private string? fileUploadError = null;
     private const long MaxFileSize = 50 * 1024 * 1024;
 
 
 
-    //handles the file selection 
+
+    protected async override Task OnInitializedAsync()
+    {
+        var context = httpContextAccessor.HttpContext;
+        var currentUser = await userManager.GetUserAsync(context.User);
+        UserId = currentUser;
+
+        model = await ModelProvider.GetModelByUserAsync(UserId);
+    }
+
+
+
+
+
+    //handles the file selection
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
         fileUploadError = null;
-        var file = e.File; 
+        var file = e.File;
 
         if (file != null)
         {
@@ -196,12 +207,12 @@
                 //checks if the file is stl
                 fileUploadError = "Only .stl files are allowed.";
                 uploadedModelFileName = string.Empty;
-                return; 
+                return;
             }
 
             try
             {
-                //saves the location 
+                //saves the location
                 var uploadFolder = Path.Combine("wwwroot", "uploads", "models");
                 if (!Directory.Exists(uploadFolder))
                 {
@@ -212,7 +223,7 @@
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await file.OpenReadStream().CopyToAsync(stream); 
+                    await file.OpenReadStream().CopyToAsync(stream);
                 }
 
                 uploadedModelFileName = file.Name;
@@ -291,12 +302,6 @@
         selectedFormat = format;
     }
 
-    //saves model files
-    private async Task OnModelFilesSelected(ChangeEventArgs e)
-    {
-        var files = e.Value as IEnumerable<IBrowserFile>;
-        modelFiles = files.Select(f => f.Name).ToArray();
-    }
 
     //saves image files
     private async Task OnImageSelected(ChangeEventArgs e)
@@ -318,10 +323,7 @@
 
     }
 
-    protected async override Task OnInitializedAsync()
-    {
-        var user = UserProvider.GetUserByUsername(username);
-    }
+    
 
     @*Navigation to Login and Register page from Upload Page*@
     private void NavigateToLogin()
@@ -368,7 +370,7 @@
 
         public UserModelUpload(DigitalModel digitalModel)
         {
-
+            
             Title = digitalModel.Title;
             ModelFiles = digitalModel.ModelFiles;
             ImageUrl = digitalModel.ImageUrl;
@@ -379,6 +381,6 @@
         }
     }
 
-    
+
 
 }
