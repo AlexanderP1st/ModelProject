@@ -11,7 +11,7 @@ using ModelProject.Context;
 namespace ModelProject.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241206100952_InitialCreate")]
+    [Migration("20241210005800_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -166,8 +166,9 @@ namespace ModelProject.Migrations
                     b.Property<int>("Downloads")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("FileSize")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("FileSize")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
@@ -188,6 +189,7 @@ namespace ModelProject.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -376,7 +378,9 @@ namespace ModelProject.Migrations
                 {
                     b.HasOne("ModelProject.Model.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
