@@ -157,8 +157,8 @@
 
 @code
 {
-    private User UserId { get; set; }   
-    private DigitalModel DigitalModel { get; set; }
+    private User User { get; set; }   
+    private DigitalModel? DigitalModel { get; set; }
     private List<DigitalModel> model; 
 
     private DigitalModel Model = new DigitalModel();
@@ -184,9 +184,9 @@
     {
         var context = httpContextAccessor.HttpContext;
         var currentUser = await userManager.GetUserAsync(context.User);
-        UserId = currentUser;
+        User = currentUser;
 
-        model = await ModelProvider.GetModelByUserAsync(UserId);
+        model = await ModelProvider.GetModelByUserAsync(User);
     }
 
 

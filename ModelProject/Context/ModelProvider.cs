@@ -8,7 +8,6 @@ public class ModelProvider
 {
     private readonly DatabaseContext _context;
     
-
     public ModelProvider(DatabaseContext context)
     {
         _context = context;
@@ -33,7 +32,8 @@ public class ModelProvider
         var users = _context.Users
         .ToDictionary(user => user.Id, user => user.UserName);
 
-        return users[model.User.Id]; 
+        return users[model.User.Id];
+
     }
 
 

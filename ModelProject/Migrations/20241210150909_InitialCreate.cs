@@ -51,6 +51,20 @@ namespace ModelProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Followed",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    FollowingUserId = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Followed", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -184,24 +198,6 @@ namespace ModelProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Followed",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Followed", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Followed_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Likes",
                 columns: table => new
                 {
@@ -292,11 +288,6 @@ namespace ModelProject.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_DigitalModels_UserId",
                 table: "DigitalModels",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Followed_UserId",
-                table: "Followed",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(

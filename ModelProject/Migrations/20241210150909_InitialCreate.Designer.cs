@@ -11,7 +11,7 @@ using ModelProject.Context;
 namespace ModelProject.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241210005800_InitialCreate")]
+    [Migration("20241210150909_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -205,12 +205,15 @@ namespace ModelProject.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("FollowingUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Followed");
                 });
@@ -381,15 +384,6 @@ namespace ModelProject.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ModelProject.Model.Follow", b =>
-                {
-                    b.HasOne("ModelProject.Model.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
