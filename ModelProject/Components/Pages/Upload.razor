@@ -28,12 +28,13 @@
             <h5>Upload Page</h5>
 
 
-
-
+          
+                   
+            
             @*Allows the user to input a Model Name:*@
             <div class="col-md-4 position-relative">
                 <label for="validationTooltip01" class="form-label">Model Name:</label>
-                <InputText type="text" class="form-control" @bind-Value="Model.Title" id="validationTooltip01" required />
+                <InputText type="text" class="form-control" @bind-Value="Model.Title" id="validationTooltip01" />
                 <div class="valid-tooltip">
                     Perfect
                 </div>
@@ -134,6 +135,23 @@
 
             <a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
         </EditForm>
+
+        <div class="d-flex justify-content-center p-2">
+            <ul class="list-group" style="max-width: 800px; width: 100%;">
+            @foreach (var model in models)
+                {
+                    <div class="position-absolute top-0 end-0 p-2">
+                        @{
+                            var userName = ReturnDesignerOfModel(model);
+                        }
+                        <div>
+                            <a href="/Home/User/@userName" class="user-link-owner">@userName</a>
+                        </div>
+                   </div>
+                }
+            </ul>
+        </div>
+        
     </Authorized>
 
     @*Allows the user to either Login or Register*@
@@ -159,7 +177,7 @@
 {
     private User User { get; set; }   
     private DigitalModel? DigitalModel { get; set; }
-    private List<DigitalModel> model; 
+    private List<DigitalModel> models; 
 
     private DigitalModel Model = new DigitalModel();
     private string selectedCategory;
@@ -186,7 +204,7 @@
         var currentUser = await userManager.GetUserAsync(context.User);
         User = currentUser;
 
-        model = await ModelProvider.GetModelByUserAsync(User);
+        models = await ModelProvider.GetModelByUserAsync(User);
     }
 
 
@@ -247,21 +265,23 @@
 
     private async Task HandleSubmit()
     {
-        if (selectedFile != null)
-        {
-            var filePath = await ModelFileProvider.SaveModelFileAsync(selectedFile);
-            Model.ModelFiles = filePath;
-        }
+       // if (selectedFile != null)
+      //  {
+          //  var filePath = await ModelFileProvider.SaveModelFileAsync(selectedFile);
+         //   Model.ModelFiles = filePath;
+       // }
 
         var digitalmodel = DigitalModel ?? new DigitalModel();
-
-        digitalmodel.User = Model.User;
-        digitalmodel.Title = Model.Title;
-        digitalmodel.Description = Model.Description;
-        digitalmodel.ModelFiles = Model.ModelFiles;
-        digitalmodel.ImageUrl = Model.ImageUrl;
-        digitalmodel.Specifications = Model.Specifications;
-        digitalmodel.FileSize = Model.FileSize;
+        {
+            digitalmodel.User = Model.User; 
+            digitalmodel.Title = Model.Title;
+            digitalmodel.Description = Model.Description;
+            digitalmodel.ModelFiles = Model.ModelFiles;
+            digitalmodel.ImageUrl = Model.ImageUrl;
+            digitalmodel.Specifications = Model.Specifications;
+            digitalmodel.FileSize = Model.FileSize;
+            digitalmodel.Category = Model.Category;
+        }
 
         if (digitalmodel.Id == 0)
         {
@@ -312,16 +332,14 @@
 
 
 
-    private void UploadModel()
-    {
+   private void UploadModel()
+   {
+  
+      //adds the model and redirects the user to the home page
+      ModelProvider.AddModelAsync(Model);
+      NavigationManager.NavigateTo("/");
 
-        Model.ModelFiles = fileformat;
-        Model.Category = category;
-        // adds the model and redirects the user to the home page
-        ModelProvider.AddModelAsync(Model);
-        NavigationManager.NavigateTo("/");
-
-    }
+   }
 
     
 
@@ -370,7 +388,7 @@
 
         public UserModelUpload(DigitalModel digitalModel)
         {
-            
+
             Title = digitalModel.Title;
             ModelFiles = digitalModel.ModelFiles;
             ImageUrl = digitalModel.ImageUrl;
@@ -381,6 +399,9 @@
         }
     }
 
-
+    private string ReturnDesignerOfModel(DigitalModel model)
+    {
+        return ModelProvider.GetUserByModel(model);
+    }
 
 }
