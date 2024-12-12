@@ -181,10 +181,10 @@ namespace ModelProject.Migrations
                     ModelFiles = table.Column<string>(type: "TEXT", nullable: false),
                     ImageUrl = table.Column<string>(type: "TEXT", nullable: false),
                     Category = table.Column<string>(type: "TEXT", nullable: false),
+                    FileFormat = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
                     Specifications = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
-                    Downloads = table.Column<int>(type: "INTEGER", nullable: false),
-                    FileSize = table.Column<string>(type: "TEXT", nullable: false)
+                    Downloads = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -25,6 +25,7 @@ else
             {
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                     <div class="card">
+                        
                         <img src="/img/digitalmodels/@model.ImageUrl" class="img-thumbnail" alt="@model.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
                         <div class="card-body">
                             <h5 class="card-title">@model.Title</h5>
@@ -35,20 +36,20 @@ else
                 </div>
             }
         </div>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4"/>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4" />
 
-    @foreach (var digitalmodel in FilteredModels)
-    {
-        <div class="col">
-           <StoreItem DigitalModels="digitalModels" />
-        </div>
-    }
+        @foreach (var digitalmodel in FilteredModels)
+        {
+            <div class="col">
+                <StoreItem DigitalModels="digitalModels" />
+            </div>
+        }
 
 
-    @if (!FilteredModels.Any())
-    {
-    <p>No models found :(</p>
-    }
+        @if (!FilteredModels.Any())
+        {
+            <p>No models found :(</p>
+        }
 
     </div>
 }
@@ -94,7 +95,7 @@ else
     {
         digitalmodel = await ModelProvider.GetAllModelsAsync();
         filteredModels = digitalmodel;
-        StateHasChanged(); 
+        StateHasChanged();
 
     }
 
@@ -112,7 +113,7 @@ else
         filteredModels = criteria switch
         {
             SortCriteria.Title => FilteredModels = filteredModels.OrderBy(c => c.Title),
-            SortCriteria.Category => FilteredModels = filteredModels.OrderBy(c => c.Category), 
+            SortCriteria.Category => FilteredModels = filteredModels.OrderBy(c => c.Category),
             _ => filteredModels
         };
     }
@@ -125,5 +126,4 @@ else
         Category
 
     }
-
 }

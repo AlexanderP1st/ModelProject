@@ -14,10 +14,9 @@
 @inject NavigationManager NavigationManager
 @inject FileUploader FileUploader
 @inject UserManager<User> userManager;
-@inject ModelFileProvider ModelFileProvider
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserProvider UserProvider
-@inject IHttpContextAccessor httpContextAccessor;
+@*@inject IHttpContextAccessor httpContextAccessor;*@
 
 
 @*Checks if the user is signed in*@
@@ -59,27 +58,12 @@
                 </div>
             </div>
 
+            
             @*Allows the user to input the Files of a 3D model*@
-            <div class="mb-4">
-                <label for="modelFileUpload" class="form-label">Upload 3D Model File (.stl only)</label>
-                <InputFile id="modelFileUpload" OnChange="HandleFileSelected" accept=".stl" />
-                @if (!string.IsNullOrEmpty(uploadedModelFileName))
-                {
-                    <p class="text-success mt-2">File Uploaded: @uploadedModelFileName</p>
-                }
-                else if (fileUploadError != null)
-                {
-                    <p class="text-danger mt-2">@fileUploadError</p>
-                }
-                else
-                {
-                    <p class="text-muted mt-2">No file uploaded yet.</p>
-                }
+            <div class="mb-3">
+                <label for="=" formFile" class="form-label">Please Input The Model Files</label>
+                <InputText class="form-control" @bind-Value="Model.ModelFiles" type="file" id="formFile" accept=".obj,.stl,.gltf,.glb" required />
             </div>
-
-
-
-
 
 
             @*Allows the user to input a description*@
@@ -101,18 +85,12 @@
             </div>
 
             @*Allows the user to enter the file size*@
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="validationTooltip03">File size</span>
-                <InputText class="form-control" @bind-Value="Model.FileSize" id="validationTooltip03" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
-                <div class="valid-tooltip">
-                    Perfect
-                </div>
-            </div>
+           
 
             @*Creates a dropdown for a user to select what catagory the model falls under*@
             <label form="formFile" class="form-label">Please select the Category of your model</label>
             <div class="btn-group">
-                <InputSelect id="categoryDropdown" class="form-select" @bind-Value="@category">
+                <InputSelect id="categoryDropdown" class="form-select" @bind-Value="@Model.Category">
                     <option value="">Select a Category</option>
                     @foreach (var category in categories)
                     {
@@ -124,19 +102,21 @@
             @*Creates a dropdown for a user to select what file format the model falls under*@
             <label form="formFile" class="form-label">Please select the file format of your model</label>
             <div class="btn-group">
-                <InputSelect id="modelfilesDropdown" class="form-select" @bind-Value="@fileformat">
+                <InputSelect id="modelfilesDropdown" class="form-select" @bind-Value="@Model.FileFormat">
                     <option value="">Select the File Format</option>
-                    @foreach (var ff in fileFormats)
+                    @foreach (var fileFormat in fileFormats)
                     {
-                        <option value="@ff">@ff</option>
+                        <option value="@fileFormat">@fileFormat</option>
                     }
                 </InputSelect>
             </div>
 
-            <a @onclick="UploadModel" class="btn btn-outline-warning m-2">Upload Model</a>
+            <div class="mt-auto">
+                <button type="submit" class="btn btn-outline-primary w-100">Upload Model</button>
+            </div>
         </EditForm>
 
-        <div class="d-flex justify-content-center p-2">
+        @*<div class="d-flex justify-content-center p-2">
             <ul class="list-group" style="max-width: 800px; width: 100%;">
             @foreach (var model in models)
                 {
@@ -150,23 +130,23 @@
                    </div>
                 }
             </ul>
-        </div>
+        </div>*@
         
     </Authorized>
 
     @*Allows the user to either Login or Register*@
     <NotAuthorized>
         <div class="card mb-3">
-            <h5>You are need an account to upload a model</h5>
-        <li class="nav-item">
-            <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
+               <h5>You are need an account to upload a model</h5>
+           <li class="nav-item">
+              <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
 
-        </li>
+           </li>
 
-        <li class="nav-item">
-            <button class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
-        </li>
-        </div>
+           <li class="nav-item">
+              <button class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
+           </li>
+       </div>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -175,127 +155,42 @@
 
 @code
 {
-    private User User { get; set; }   
-    private DigitalModel? DigitalModel { get; set; }
-    private List<DigitalModel> models; 
-
-    private DigitalModel Model = new DigitalModel();
-    private string selectedCategory;
-    private string selectedFormat;
-    private string[] imageUrl = [];
-    private string[] modelFiles = [];
-    private string fileformat;
-    private string category;
-    private List<string> modelFilePaths = new();
-    private List<string> imageFilePaths = new();
-    private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character", "Object" };
+    private User User { get; set; } = new();
+    private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character" };
     private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
-    private IBrowserFile selectedFile;
-    private string uploadedModelFileName = string.Empty;
-    private string? fileUploadError = null;
-    private const long MaxFileSize = 50 * 1024 * 1024;
 
+    [Parameter]
+    public DigitalModel? DigitalModel { get; set; }
+    private UserModelUpload Model { get; set; }
 
-
-
-    protected async override Task OnInitializedAsync()
+    protected override void OnParametersSet()
     {
-        var context = httpContextAccessor.HttpContext;
-        var currentUser = await userManager.GetUserAsync(context.User);
-        User = currentUser;
-
-        models = await ModelProvider.GetModelByUserAsync(User);
+        Model = DigitalModel is null ? new UserModelUpload() : new UserModelUpload(DigitalModel);
+        base.OnParametersSet();
     }
-
-
-
-
-
-    //handles the file selection
-    private async Task HandleFileSelected(InputFileChangeEventArgs e)
-    {
-        fileUploadError = null;
-        var file = e.File;
-
-        if (file != null)
-        {
-            var fileExtension = Path.GetExtension(file.Name).ToLower();
-            if (fileExtension != ".stl")
-            {
-                //checks if the file is stl
-                fileUploadError = "Only .stl files are allowed.";
-                uploadedModelFileName = string.Empty;
-                return;
-            }
-
-            try
-            {
-                //saves the location
-                var uploadFolder = Path.Combine("wwwroot", "uploads", "models");
-                if (!Directory.Exists(uploadFolder))
-                {
-                    Directory.CreateDirectory(uploadFolder);
-                }
-
-                var filePath = Path.Combine(uploadFolder, file.Name);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.OpenReadStream().CopyToAsync(stream);
-                }
-
-                uploadedModelFileName = file.Name;
-
-                Model.ModelFiles = $"/uploads/models/{file.Name}";
-            }
-            catch (Exception ex)
-            {
-                fileUploadError = $"Error uploading file: {ex.Message}";
-            }
-        }
-        else
-        {
-            //returns message if no files are sleceted
-            fileUploadError = "No file selected.";
-        }
-
-    }
-
-
-
+    
     private async Task HandleSubmit()
     {
-       // if (selectedFile != null)
-      //  {
-          //  var filePath = await ModelFileProvider.SaveModelFileAsync(selectedFile);
-         //   Model.ModelFiles = filePath;
-       // }
-
         var digitalmodel = DigitalModel ?? new DigitalModel();
-        {
-            digitalmodel.User = Model.User; 
-            digitalmodel.Title = Model.Title;
-            digitalmodel.Description = Model.Description;
-            digitalmodel.ModelFiles = Model.ModelFiles;
-            digitalmodel.ImageUrl = Model.ImageUrl;
-            digitalmodel.Specifications = Model.Specifications;
-            digitalmodel.FileSize = Model.FileSize;
-            digitalmodel.Category = Model.Category;
-        }
+        
+        digitalmodel.Title = Model.Title;
+        digitalmodel.Description = Model.Description;
+        digitalmodel.ModelFiles = Model.ModelFiles;
+        digitalmodel.ImageUrl = Model.ImageUrl;
+        digitalmodel.Specifications = Model.Specifications;
+        digitalmodel.FileFormat = Model.FileFormat; 
+        
 
         if (digitalmodel.Id == 0)
         {
             await ModelProvider.AddModelAsync(digitalmodel);
-            Model = new DigitalModel();
+            Model = new UserModelUpload(digitalmodel);
         }
         else
         {
             await ModelProvider.UpdateModelAsync(digitalmodel);
         }
-
         NavigationManager.NavigateTo("/");
-
-
         // submit the model
     }
 
@@ -308,84 +203,52 @@
             Model.ImageUrl = null;
             return;
         }
-
         Model.ImageUrl = filename;
     }
-
-    private void SelectCategory(string category)
-    {
-        selectedCategory = category;
-    }
-
-    private void SelectFormat(string format)
-    {
-        selectedFormat = format;
-    }
-
-
-    //saves image files
-    private async Task OnImageSelected(ChangeEventArgs e)
-    {
-        var files = e.Value as IEnumerable<IBrowserFile>;
-        imageUrl = files.Select(f => f.Name).ToArray();
-    }
-
-
-
-   private void UploadModel()
-   {
-  
-      //adds the model and redirects the user to the home page
-      ModelProvider.AddModelAsync(Model);
-      NavigationManager.NavigateTo("/");
-
-   }
-
     
-
+    
+    @*Working on uploading an image
+    private async Task OnImageSelected(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+        foreach(var file in files)
+        {
+            var imageUrl = await SaveFileAsync(file);
+            imageFilePaths.Add(imageUrl);
+        }
+        Model.Images = string.Join(",", imageFilePaths);
+    }*@
     @*Navigation to Login and Register page from Upload Page*@
     private void NavigateToLogin()
     {
         Navigation.NavigateTo("/Account/Login");
     }
-
     private void NavigateToRegister()
     {
         Navigation.NavigateTo("/Account/Register");
     }
-
     public sealed class UserModelUpload
     {
         public string User { get; set; } = "";
-
         [Required(ErrorMessage = "Model title is required.")]
         public string Title { get; set; } = "";
-
-
         [Required(ErrorMessage = "At least one model file is required.")]
         public string ModelFiles { get; set; } = "";
-
-
         [Required(ErrorMessage = "At least one image is required.")]
         public string ImageUrl { get; set; } = "";
-
         [Required(ErrorMessage = "Category is required.")]
         public string Category { get; set; } = "";
-
         [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; } = "";
-
         [Required(ErrorMessage = "Specifications are required.")]
         public string Specifications { get; set; } = "";
-
-        [Required(ErrorMessage = "File size are required.")]
-        public string FileSize { get; set; } = "";
+        [Required(ErrorMessage = "FileFormat is required.")]
+        public string FileFormat { get; set; } = ""; 
+        
 
         public UserModelUpload()
         {
-
         }
-
         public UserModelUpload(DigitalModel digitalModel)
         {
 
@@ -395,13 +258,8 @@
             Category = digitalModel.Category;
             Description = digitalModel.Description;
             Specifications = digitalModel.Specifications;
-            FileSize = digitalModel.FileSize;
+            FileFormat = digitalModel.FileFormat; 
+            
         }
     }
-
-    private string ReturnDesignerOfModel(DigitalModel model)
-    {
-        return ModelProvider.GetUserByModel(model);
-    }
-
 }

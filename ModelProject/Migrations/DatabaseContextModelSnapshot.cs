@@ -163,7 +163,7 @@ namespace ModelProject.Migrations
                     b.Property<int>("Downloads")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("FileSize")
+                    b.Property<string>("FileFormat")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

@@ -24,6 +24,9 @@ namespace ModelProject.Model
         [Required(ErrorMessage = "Category is required.")]
         public string Category { get; set; }
 
+        [Required(ErrorMessage = "Category is required.")]
+        public string FileFormat { get; set; } 
+
         [Required(ErrorMessage = "Description is required.")]
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
         public string Description { get; set; }
@@ -37,7 +40,7 @@ namespace ModelProject.Model
         public int Downloads { get; set; }
 
 
+       
         
-        public string FileSize { get; set; }
     }
 }
