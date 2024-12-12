@@ -3,6 +3,7 @@
 @inject ModelProvider ModelProvider
 @inject NavigationManager NavigationManager
 
+
 <PageTitle>Model Details</PageTitle>
 
 @*If models are missing it will display Loading*@
@@ -19,24 +20,26 @@ else
                     <div class="carousel-inner">
 
                         @*path to display image of the model*@
-                       
-                            @foreach (var ImageUrl in imageFiles)
-                            {
-                                <img src="/img/digitalmodels/@digitalModel.ImageUrl" class="img-thumbnail" alt="@digitalModel.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
-                            }
+                        @foreach (var ImageUrl in imageFiles)
+                        {
+                            <img src="/img/digitalmodels/@digitalModel.ImageUrl" class="img-thumbnail" alt="@digitalModel.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
+                        }
+
+              
                     </div>
 
                 </div>
             </div>
             @*Displays all relevent data about a specific model which relates to what the user inputted*@
-            <div class="col-md-6">
+             <div class="col-md-6">
                 <h1>@digitalModel.Title</h1>
                 <p><strong>Category:</strong> @digitalModel.Category</p>
                 <p><strong>Specifications:</strong> @digitalModel.Specifications</p>
                 <p><strong>Description:</strong> @digitalModel.Description</p>
                 <p><strong>Downloads:</strong> @digitalModel.Downloads</p>
+                <p><strong>File Size:</strong> @digitalModel.FileSize MB</p>
                
-                <button @onclick="DownloadModel" class="btn btn-primary">Download Model</button>
+
                 @*Redirects the user to the homepage if they press the button*@
                 <button @onclick="NavigateToHome" class="btn btn-secondary ms-2">Back to Home</button>
             </div>
@@ -73,28 +76,18 @@ else
         }
     }
 
-    //downloads
+    //downloads    
     private void DownloadModel()
     {
         if (digitalModel != null)
         {
-            //increases the download by one one clicked
+            //increases the download by one one clicked 
             digitalModel.Downloads++;
             //updates the download within the database
             ModelProvider.UpdateModelAsync(digitalModel);
 
         }
     }
-
-    // navigation command to the home page
-    private void NavigateToHome()
-    {
-        NavigationManager.NavigateTo("/");
-    }
-}
-
-     
-    
 
     // navigation command to the home page
     private void NavigateToHome()

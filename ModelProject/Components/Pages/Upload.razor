@@ -1,12 +1,11 @@
-﻿﻿@using ModelProject.Context
+﻿@using ModelProject.Context
 ﻿@using ModelProject.Model
-@using Microsoft.AspNetCore.Http @*Retrieving user Id*@
-@using Microsoft.AspNetCore.Identity @*Retrieving user Id*@
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.ComponentModel.DataAnnotations
 @using System.IO;
 @using Microsoft.AspNetCore.Components.Forms;
-
 
 @page "/Upload"
 @inject ModelProvider ModelProvider
@@ -14,31 +13,21 @@
 @inject NavigationManager NavigationManager
 @inject FileUploader FileUploader
 @inject UserManager<User> userManager;
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject UserProvider UserProvider
-@*@inject IHttpContextAccessor httpContextAccessor;*@
-
 
 @*Checks if the user is signed in*@
 <AuthorizeView>
     <Authorized Context="Auth">
 
+
         <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
             <h5>Upload Page</h5>
 
 
-          
-                   
-            
             @*Allows the user to input a Model Name:*@
             <div class="col-md-4 position-relative">
-                <label for="validationTooltip01" class="form-label">Model Name:</label>
-                <InputText type="text" class="form-control" @bind-Value="Model.Title" id="validationTooltip01" />
-                <div class="valid-tooltip">
-                    Perfect
-                </div>
+                <label class="form-label">Model Name:</label>
+                <InputText type="text" class="form-control" @bind-Value="Model.Title" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" required />
             </div>
-
 
             @*Allows the user to input images of a 3D model*@
             <div class="col-lg-6 col-12 mt-1">
@@ -65,27 +54,17 @@
                 <InputText class="form-control" @bind-Value="Model.ModelFiles" type="file" id="formFile" accept=".obj,.stl,.gltf,.glb" required />
             </div>
 
-
             @*Allows the user to input a description*@
             <div class="input-group mb-3">
-                <span class="input-group-text" id="validationTooltip02">Description:</span>
-                <InputText class="form-control" @bind-Value="Model.Description" id="validationTooltip02" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
-                <div class="valid-tooltip">
-                    Perfect
-                </div>
+                <span class="input-group-text" >Description:</span>
+                <InputText class="form-control" @bind-Value="Model.Description" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" required/>
             </div>
 
             @*Allows the user to input Specifcations*@
             <div class="input-group mb-3">
                 <span class="input-group-text" id="validationTooltip03">Specifications</span>
-                <InputText class="form-control" @bind-Value="Model.Specifications" id="validationTooltip03" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
-                <div class="valid-tooltip">
-                    Perfect
-                </div>
+                <InputText class="form-control" @bind-Value="Model.Specifications" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" required/>
             </div>
-
-            @*Allows the user to enter the file size*@
-           
 
             @*Creates a dropdown for a user to select what catagory the model falls under*@
             <label form="formFile" class="form-label">Please select the Category of your model</label>
@@ -98,7 +77,6 @@
                     }
                 </InputSelect>
             </div>
-
             @*Creates a dropdown for a user to select what file format the model falls under*@
             <label form="formFile" class="form-label">Please select the file format of your model</label>
             <div class="btn-group">
@@ -110,13 +88,12 @@
                     }
                 </InputSelect>
             </div>
-
             <div class="mt-auto">
                 <button type="submit" class="btn btn-outline-primary w-100">Upload Model</button>
             </div>
         </EditForm>
 
-        @*<div class="d-flex justify-content-center p-2">
+       @* <div class="d-flex justify-content-center p-2">
             <ul class="list-group" style="max-width: 800px; width: 100%;">
             @foreach (var model in models)
                 {
@@ -136,17 +113,15 @@
 
     @*Allows the user to either Login or Register*@
     <NotAuthorized>
-        <div class="card mb-3">
-               <h5>You are need an account to upload a model</h5>
-           <li class="nav-item">
-              <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
-
-           </li>
-
-           <li class="nav-item">
-              <button class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
-           </li>
-       </div>
+      <div class="card mb-3">
+         <h5>You are need an account to upload a model</h5>
+        <li class="nav-item">
+          <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
+        </li>
+        <li class="nav-item">
+            <button class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
+        </li>
+      </div>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -155,12 +130,12 @@
 
 @code
 {
-    private User User { get; set; } = new();
-    private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character" };
-    private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
+
+    private User User { get; set; } 
 
     [Parameter]
     public DigitalModel? DigitalModel { get; set; }
+
     private UserModelUpload Model { get; set; }
 
     protected override void OnParametersSet()
@@ -168,30 +143,34 @@
         Model = DigitalModel is null ? new UserModelUpload() : new UserModelUpload(DigitalModel);
         base.OnParametersSet();
     }
-    
+
+    private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character" };
+    private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
+
     private async Task HandleSubmit()
     {
         var digitalmodel = DigitalModel ?? new DigitalModel();
-        
+
         digitalmodel.Title = Model.Title;
         digitalmodel.Description = Model.Description;
         digitalmodel.ModelFiles = Model.ModelFiles;
         digitalmodel.ImageUrl = Model.ImageUrl;
         digitalmodel.Specifications = Model.Specifications;
-        digitalmodel.FileFormat = Model.FileFormat; 
-        
+        digitalmodel.Category = Model.Category;
+        digitalmodel.FileFormat = Model.FileFormat;
 
         if (digitalmodel.Id == 0)
         {
             await ModelProvider.AddModelAsync(digitalmodel);
-            Model = new UserModelUpload(digitalmodel);
+            Model = new UserModelUpload();
+           
+            // submit the model
         }
         else
         {
             await ModelProvider.UpdateModelAsync(digitalmodel);
         }
         NavigationManager.NavigateTo("/");
-        // submit the model
     }
 
 
@@ -205,19 +184,17 @@
         }
         Model.ImageUrl = filename;
     }
-    
-    
-    @*Working on uploading an image
-    private async Task OnImageSelected(InputFileChangeEventArgs e)
+
+    @*private async Task UploadModel()
     {
-        var files = e.GetMultipleFiles();
-        foreach(var file in files)
-        {
-            var imageUrl = await SaveFileAsync(file);
-            imageFilePaths.Add(imageUrl);
-        }
-        Model.Images = string.Join(",", imageFilePaths);
+        
+        // adds the model and redirects the user to the home page
+        await ModelProvider.AddModelAsync(Model);
+        NavigationManager.NavigateTo("/");
     }*@
+
+
+
     @*Navigation to Login and Register page from Upload Page*@
     private void NavigateToLogin()
     {
@@ -229,7 +206,7 @@
     }
     public sealed class UserModelUpload
     {
-        public string User { get; set; } = "";
+
         [Required(ErrorMessage = "Model title is required.")]
         public string Title { get; set; } = "";
         [Required(ErrorMessage = "At least one model file is required.")]
@@ -242,24 +219,23 @@
         public string Description { get; set; } = "";
         [Required(ErrorMessage = "Specifications are required.")]
         public string Specifications { get; set; } = "";
-        [Required(ErrorMessage = "FileFormat is required.")]
-        public string FileFormat { get; set; } = ""; 
-        
+        [Required]
+        public string FileFormat { get; set; } = "";
 
         public UserModelUpload()
         {
         }
-        public UserModelUpload(DigitalModel digitalModel)
+
+        public UserModelUpload(DigitalModel digitalmodel)
         {
 
-            Title = digitalModel.Title;
-            ModelFiles = digitalModel.ModelFiles;
-            ImageUrl = digitalModel.ImageUrl;
-            Category = digitalModel.Category;
-            Description = digitalModel.Description;
-            Specifications = digitalModel.Specifications;
-            FileFormat = digitalModel.FileFormat; 
-            
+            Title = digitalmodel.Title;
+            ModelFiles = digitalmodel.ModelFiles;
+            ImageUrl = digitalmodel.ImageUrl;
+            Category = digitalmodel.Category;
+            Description = digitalmodel.Description;
+            Specifications = digitalmodel.Specifications;
+            FileFormat = digitalmodel.FileFormat; 
         }
     }
 }

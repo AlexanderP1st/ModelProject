@@ -24,7 +24,7 @@ namespace ModelProject.Model
         [Required(ErrorMessage = "Category is required.")]
         public string Category { get; set; }
 
-        [Required(ErrorMessage = "Category is required.")]
+        [Required(ErrorMessage = "FileFormat is required.")]
         public string FileFormat { get; set; } 
 
         [Required(ErrorMessage = "Description is required.")]

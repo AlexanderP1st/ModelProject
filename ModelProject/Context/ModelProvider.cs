@@ -15,29 +15,30 @@ public class ModelProvider
 
     }
 
-    //public async Task<List<DigitalModel>> GetModelByUserAsync(User user)
-    //{
-        //if (user == null)
-        //{
-          //  return new List<DigitalModel>();
-       // }
+    //  public async Task<List<DigitalModel>> GetModelByUserAsync(User user)
+    //  {
+    //   if (user == null)
+    //   {
+    //       return new List<DigitalModel>();
+    //  }
 
- //       return await _context.DigitalModels
-    //        .Where(model => model.User.Id == user.Id)
-      //      .ToListAsync(); 
-    //}
+    //   return await _context.DigitalModels
+    //  .Where(model => model.User.Id == user.Id)
+    // .ToListAsync(); 
+    //  }
 
     //public string GetUserByModel(DigitalModel model)
     //{
-      //  var users = _context.Users
-        //.ToDictionary(user => user.Id, user => user.UserName);
+    //  var users = _context.Users
+    //.ToDictionary(user => user.Id, user => user.UserName);
 
-        //return users[model.User.Id];
+    //return users[model.User.Id];
 
     //}
 
 
 
+  
     public async Task AddModelAsync(DigitalModel model)
     {
         _context.DigitalModels.Add(model);
@@ -63,6 +64,7 @@ public class ModelProvider
                              .FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    
+   
+
 
 }

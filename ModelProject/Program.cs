@@ -25,7 +25,6 @@ builder.Services.AddScoped<FileUploader>();
 
 
 
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = IdentityConstants.ApplicationScheme;
