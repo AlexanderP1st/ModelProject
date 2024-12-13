@@ -31,13 +31,13 @@ public class ModelProvider
       .ToListAsync(); 
       }
 
-    public string GetUserByModel(DigitalModel model)
-    {
-      var users = _context.Users.ToDictionary(user => user.Id, user => user.UserName);
+    //public string GetUserByModel(DigitalModel model)
+    //{
+      //var users = _context.Users.ToDictionary(user => user.Id, user => user.UserName);
 
-        return users[model.User.Id];
+        //return users[model.User.Id];
 
-    }
+    //}
 
 
   

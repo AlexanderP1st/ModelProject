@@ -23,7 +23,7 @@
         
             
            
-            <h6>Hello @UserObj.UserName</h6>
+            
 
             <h1>Upload Page</h1>
 
@@ -104,7 +104,7 @@
             </div>
         </EditForm>
 
-        <div class="d-flex justify-content-center p-2">
+        @*<div class="d-flex justify-content-center p-2">
             <ul class="list-group" style="max-width: 800px; width: 100%;">
              @if (DigitalModel != null)
                 {
@@ -118,7 +118,7 @@
                    </div>
                 }
             </ul>
-        </div>
+        </div>*@
         
     </Authorized>
 
@@ -210,10 +210,10 @@
 
    
 
-    private string ReturnDesignerOfModel(Model.DigitalModel digitalmodel)
-    {
-        return modelProvider.GetUserByModel(digitalmodel);
-    }
+    //private string ReturnDesignerOfModel(Model.DigitalModel digitalmodel)
+    //{
+        //return modelProvider.GetUserByModel(digitalmodel);
+    //}
 
 
 
