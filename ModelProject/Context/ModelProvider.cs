@@ -33,10 +33,9 @@ public class ModelProvider
 
     public string GetUserByModel(DigitalModel model)
     {
-      var users = _context.Users
-      .ToDictionary(user => user.Id, user => user.UserName);
+      var users = _context.Users.ToDictionary(user => user.Id, user => user.UserName);
 
-      return users[model.User.Id];
+        return users[model.User.Id];
 
     }
 
@@ -57,7 +56,7 @@ public class ModelProvider
 
     public async Task<List<DigitalModel>> GetAllModelsAsync()
     {
-        return await _context.DigitalModels.ToListAsync();
+        return await _context.DigitalModels.Include(m=>m.User).ToListAsync();
     }
 
     public async Task<DigitalModel?> GetModelByIdAsync(int id)

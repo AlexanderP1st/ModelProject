@@ -32,6 +32,10 @@ else
             </div>
             @*Displays all relevent data about a specific model which relates to what the user inputted*@
             <div class="col-md-6">
+                @{
+                    var modelDesigner = ReturnAuthorOfModel(digitalModel);
+
+                }
                 <h1>@digitalModel.Title</h1>
                 <p><strong>Category:</strong> @digitalModel.Category</p>
                 <p><strong>Specifications:</strong> @digitalModel.Specifications</p>
@@ -62,7 +66,7 @@ else
     [Parameter]
     public int ModelId { get; set; }
     private string[] imageUrl = [];
-
+   
     private DigitalModel? digitalModel;
     private List<string> imageFiles = new();
     private List<string> modelFiles = new();
@@ -101,4 +105,8 @@ else
         return modelProvider.GetUserByModel(digitalmodel);
     }
 
+    private string ReturnAurthorOfPost(Model.DigitalModel digitalmodel)
+    {
+        return modelProvider.GetUserByModel(digitalmodel);
+    }
 }

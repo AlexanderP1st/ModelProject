@@ -9,9 +9,10 @@
 @page "/Upload"
 @inject ModelProvider modelProvider
 @inject NavigationManager Navigation
-
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject FileUploader FileUploader
 @inject UserManager<User> userManager;
+@inject UserProvider UserProvider;
 @inject IHttpContextAccessor httpContextAccessor
 
 @*Checks if the user is signed in*@
@@ -20,39 +21,49 @@
 
         <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
         
-            <h5>Upload Page</h5>
+            
+           
+            <h6>Hello @UserObj.UserName</h6>
 
+            <h1>Upload Page</h1>
 
+           
             @*Allows the user to input a Model Name:*@
-            <div class="col-md-4 position-relative">
-                <label class="form-label">Model Name:</label>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Model Name:</span>
                 <InputText type="text" class="form-control" @bind-Value="Model.Title" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt"/>
             </div>
 
             @*Allows the user to input images of a 3D model*@
-            <div class="col-lg-6 col-12 mt-1">
-                <div class="card h-100">
-                    <div class="card-body bg-light d-flex flex-column">
-                        <h4 class="card-title">Model image (JPG/ JPEG)</h4>
-                        <div class="form-group mb-2">
-                            <InputFile id="imageUrl" class="form-control" @bind-Value="@Model.ImageUrl" OnChange="LoadFile" />
-                            <div class="small">
-                                <ValidationMessage For="@(() => Model.ImageUrl)" />
+            <div class="row mt-1">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="card h-100">
+                        <div class="card-body bg-light d-flex flex-column">
+                            <h4 class="card-title">Model Image (JPG/ JPEG)</h4>
+                            <div class="form-group mb-2">
+                                <InputFile id="imageUrl" class="form-control" @bind-Value="@Model.ImageUrl" OnChange="LoadFile" />
+                                <div class="small">
+                                    <ValidationMessage For="@(() => Model.ImageUrl)" />
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <img src="/img/digitalmodels/@Model.ImageUrl" class="img-thumbnail" alt="@Model.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
                             </div>
                         </div>
-                        <div class="mb-2">
-                            <img src="/img/digitalmodels/@Model.ImageUrl" class="img-thumbnail" alt="@Model.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
+                    </div>
+                </div>
+
+                @*Allows the user to input a model file*@
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="card h-100">
+                        <div class="card-body bg-light d-flex flex-column">
+                            <h4 class="card-title">Model Files</h4>
+                            <InputText class="form-control" @bind-Value="Model.ModelFiles" type="file" id="formFile" accept=".obj,.stl,.gltf,.glb" />
                         </div>
                     </div>
                 </div>
             </div>
 
-            
-            @*Allows the user to input the Files of a 3D model*@
-            <div class="mb-3">
-                <label for="=" formFile" class="form-label">Please Input The Model Files</label>
-                <InputText class="form-control" @bind-Value="Model.ModelFiles" type="file" id="formFile" accept=".obj,.stl,.gltf,.glb"/>
-            </div>
 
             @*Allows the user to input a description*@
             <div class="input-group mb-3">
@@ -137,9 +148,9 @@
 
     private UserModelUpload Model { get; set; }
     private List<DigitalModel> digitalModels;
-    private string user_name; 
+    private User user; 
     private int id {get; set;}
-    private User UserId {get; set;}
+    private User UserObj {get; set;}
 
     protected override void OnParametersSet()
     {
@@ -162,10 +173,18 @@
         Model.ImageUrl = filename;
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var username = authState!.User!.Identity!.Name!;
+        user = UserProvider.GetUserByUsername(username)!;
+
+    }
     private async Task HandleSubmit()
     {
         var digitalmodel = DigitalModel ?? new DigitalModel();
 
+        digitalmodel.User = Model.UserId;
         digitalmodel.Title = Model.Title;
         digitalmodel.Description = Model.Description;
         digitalmodel.ModelFiles = Model.ModelFiles;
@@ -189,15 +208,7 @@
 
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        var context = httpContextAccessor.HttpContext;
-        var currentUser = await userManager.GetUserAsync(context.User);
-        UserId = currentUser;
-
-        digitalModels = await modelProvider.GetModelByUserAsync(UserId);
-
-    }
+   
 
     private string ReturnDesignerOfModel(Model.DigitalModel digitalmodel)
     {
@@ -218,6 +229,7 @@
     }
     public sealed class UserModelUpload
     {
+        public User UserId { get; set; }
 
         [Required(ErrorMessage = "Model title is required.")]
         public string Title { get; set; } = "";
@@ -240,7 +252,7 @@
 
         public UserModelUpload(DigitalModel digitalmodel)
         {
-
+            UserId = digitalmodel.User; 
             Title = digitalmodel.Title;
             ModelFiles = digitalmodel.ModelFiles;
             ImageUrl = digitalmodel.ImageUrl;
