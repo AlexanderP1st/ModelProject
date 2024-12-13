@@ -4,8 +4,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.ComponentModel.DataAnnotations
-@using System.IO;
-@using Microsoft.AspNetCore.Components.Forms;
+
 
 @page "/Upload"
 @inject ModelProvider ModelProvider
@@ -26,7 +25,7 @@
             @*Allows the user to input a Model Name:*@
             <div class="col-md-4 position-relative">
                 <label class="form-label">Model Name:</label>
-                <InputText type="text" class="form-control" @bind-Value="Model.Title" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" required />
+                <InputText type="text" class="form-control" @bind-Value="Model.Title" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt"/>
             </div>
 
             @*Allows the user to input images of a 3D model*@
@@ -51,19 +50,19 @@
             @*Allows the user to input the Files of a 3D model*@
             <div class="mb-3">
                 <label for="=" formFile" class="form-label">Please Input The Model Files</label>
-                <InputText class="form-control" @bind-Value="Model.ModelFiles" type="file" id="formFile" accept=".obj,.stl,.gltf,.glb" required />
+                <InputText class="form-control" @bind-Value="Model.ModelFiles" type="file" id="formFile" accept=".obj,.stl,.gltf,.glb"/>
             </div>
 
             @*Allows the user to input a description*@
             <div class="input-group mb-3">
                 <span class="input-group-text" >Description:</span>
-                <InputText class="form-control" @bind-Value="Model.Description" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" required/>
+                <InputText class="form-control" @bind-Value="Model.Description" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
             </div>
 
             @*Allows the user to input Specifcations*@
             <div class="input-group mb-3">
                 <span class="input-group-text" id="validationTooltip03">Specifications</span>
-                <InputText class="form-control" @bind-Value="Model.Specifications" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" required/>
+                <InputText class="form-control" @bind-Value="Model.Specifications" aria-label="Enter Here" aria-describedy="inputGroup-sizing-defullt" />
             </div>
 
             @*Creates a dropdown for a user to select what catagory the model falls under*@
@@ -131,7 +130,6 @@
 @code
 {
 
-    private User User { get; set; } 
 
     [Parameter]
     public DigitalModel? DigitalModel { get; set; }
@@ -146,6 +144,18 @@
 
     private List<string> categories = new List<string> { "Vehicles", "Sci-Fi", "Animal", "Horror", "Videogame", "Character" };
     private List<string> fileFormats = new() { "obj", "fbx", "stl", "gltf", "glb" };
+
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        var filename = await FileUploader.UploadFileAsync(e.File);
+        if (filename is null)
+        {
+            Model.ImageUrl = null;
+            return;
+        }
+
+        Model.ImageUrl = filename;
+    }
 
     private async Task HandleSubmit()
     {
@@ -163,27 +173,19 @@
         {
             await ModelProvider.AddModelAsync(digitalmodel);
             Model = new UserModelUpload();
-           
+            NavigationManager.NavigateTo("/");
             // submit the model
         }
         else
         {
-            await ModelProvider.UpdateModelAsync(digitalmodel);
+          await ModelProvider.UpdateModelAsync(digitalmodel);
+          NavigationManager.NavigateTo("/");
         }
-        NavigationManager.NavigateTo("/");
+       
     }
 
 
-    private async Task LoadFile(InputFileChangeEventArgs e)
-    {
-        var filename = await FileUploader.UploadFileAsync(e.File);
-        if (filename is null)
-        {
-            Model.ImageUrl = null;
-            return;
-        }
-        Model.ImageUrl = filename;
-    }
+   
 
     @*private async Task UploadModel()
     {

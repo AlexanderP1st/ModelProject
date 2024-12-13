@@ -157,7 +157,6 @@ namespace ModelProject.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Downloads")
@@ -167,12 +166,10 @@ namespace ModelProject.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FileSize")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("FileSize")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ModelFiles")
@@ -181,16 +178,13 @@ namespace ModelProject.Migrations
 
                     b.Property<string>("Specifications")
                         .IsRequired()
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(15)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -382,9 +376,7 @@ namespace ModelProject.Migrations
                 {
                     b.HasOne("ModelProject.Model.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
