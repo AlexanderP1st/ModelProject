@@ -1,6 +1,6 @@
-﻿page "/ModelPage/{ModelId:int}"
+﻿@page "/ModelPage/{ModelId:int}"
 @using ModelProject.Model
-@inject ModelProvider ModelProvider
+@inject ModelProvider modelProvider
 @inject NavigationManager NavigationManager
 
 
@@ -37,8 +37,9 @@ else
                 <p><strong>Specifications:</strong> @digitalModel.Specifications</p>
                 <p><strong>Description:</strong> @digitalModel.Description</p>
                 <p><strong>Downloads:</strong> @digitalModel.Downloads</p>
-                <p><strong>File Size:</strong> @digitalModel.FileSize MB</p>
-
+               
+                @*Allows the user to download the model*@
+                <button @onclick="DownloadModel" class="btn btn-primary ms-2">Download</button>
 
                 @*Redirects the user to the homepage if they press the button*@
                 <button @onclick="NavigateToHome" class="btn btn-secondary ms-2">Back to Home</button>
@@ -68,7 +69,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        digitalModel = await ModelProvider.GetModelByIdAsync(ModelId);
+        digitalModel = await modelProvider.GetModelByIdAsync(ModelId);
         if (digitalModel != null)
         {
             imageFiles = digitalModel.ImageUrl.Split(',').ToList();
@@ -84,7 +85,7 @@ else
             //increases the download by one one clicked
             digitalModel.Downloads++;
             //updates the download within the database
-            ModelProvider.UpdateModelAsync(digitalModel);
+            modelProvider.UpdateModelAsync(digitalModel);
 
         }
     }
@@ -94,4 +95,10 @@ else
     {
         NavigationManager.NavigateTo("/");
     }
+
+    private string ReturnAuthorOfModel(Model.DigitalModel digitalmodel)
+    {
+        return modelProvider.GetUserByModel(digitalmodel);
+    }
+
 }

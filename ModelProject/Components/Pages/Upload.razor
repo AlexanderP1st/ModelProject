@@ -7,18 +7,19 @@
 
 
 @page "/Upload"
-@inject ModelProvider ModelProvider
+@inject ModelProvider modelProvider
 @inject NavigationManager Navigation
-@inject NavigationManager NavigationManager
+
 @inject FileUploader FileUploader
 @inject UserManager<User> userManager;
+@inject IHttpContextAccessor httpContextAccessor
 
 @*Checks if the user is signed in*@
 <AuthorizeView>
     <Authorized Context="Auth">
 
-
         <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
+        
             <h5>Upload Page</h5>
 
 
@@ -92,13 +93,13 @@
             </div>
         </EditForm>
 
-       @* <div class="d-flex justify-content-center p-2">
+        <div class="d-flex justify-content-center p-2">
             <ul class="list-group" style="max-width: 800px; width: 100%;">
-            @foreach (var model in models)
+             @if (DigitalModel != null)
                 {
                     <div class="position-absolute top-0 end-0 p-2">
                         @{
-                            var userName = ReturnDesignerOfModel(model);
+                            var userName = modelProvider.GetUserByModel(DigitalModel);
                         }
                         <div>
                             <a href="/Home/User/@userName" class="user-link-owner">@userName</a>
@@ -106,7 +107,7 @@
                    </div>
                 }
             </ul>
-        </div>*@
+        </div>
         
     </Authorized>
 
@@ -135,6 +136,10 @@
     public DigitalModel? DigitalModel { get; set; }
 
     private UserModelUpload Model { get; set; }
+    private List<DigitalModel> digitalModels;
+    private string user_name; 
+    private int id {get; set;}
+    private User UserId {get; set;}
 
     protected override void OnParametersSet()
     {
@@ -171,29 +176,34 @@
 
         if (digitalmodel.Id == 0)
         {
-            await ModelProvider.AddModelAsync(digitalmodel);
+            await modelProvider.AddModelAsync(digitalmodel);
             Model = new UserModelUpload();
-            NavigationManager.NavigateTo("/");
+            Navigation.NavigateTo("/");
             // submit the model
         }
         else
         {
-          await ModelProvider.UpdateModelAsync(digitalmodel);
-          NavigationManager.NavigateTo("/");
+            await modelProvider.UpdateModelAsync(digitalmodel);
+            Navigation.NavigateTo("/");
         }
-       
+
     }
 
-
-   
-
-    @*private async Task UploadModel()
+    protected override async Task OnInitializedAsync()
     {
-        
-        // adds the model and redirects the user to the home page
-        await ModelProvider.AddModelAsync(Model);
-        NavigationManager.NavigateTo("/");
-    }*@
+        var context = httpContextAccessor.HttpContext;
+        var currentUser = await userManager.GetUserAsync(context.User);
+        UserId = currentUser;
+
+        digitalModels = await modelProvider.GetModelByUserAsync(UserId);
+
+    }
+
+    private string ReturnDesignerOfModel(Model.DigitalModel digitalmodel)
+    {
+        return modelProvider.GetUserByModel(digitalmodel);
+    }
+
 
 
 
@@ -239,5 +249,6 @@
             Specifications = digitalmodel.Specifications;
             FileFormat = digitalmodel.FileFormat; 
         }
+
     }
 }
