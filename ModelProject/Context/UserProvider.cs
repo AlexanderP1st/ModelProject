@@ -19,5 +19,10 @@ namespace ModelProject.Context
             //returns the user with the specified username
             return _context.Users.FirstOrDefault(user => user.UserName == username);
         }
+
+        public async Task<User?> GetUserByIdAsync(string? id)
+        {
+            return await _context.Users.FindAsync(id); 
+        }
     }
 }

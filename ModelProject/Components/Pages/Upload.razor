@@ -18,15 +18,10 @@
 @*Checks if the user is signed in*@
 <AuthorizeView>
     <Authorized Context="Auth">
+        <h1>Upload Page</h1>
 
         <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
         
-            
-           
-            
-
-            <h1>Upload Page</h1>
-
            
             @*Allows the user to input a Model Name:*@
             <div class="input-group mb-3">
@@ -141,16 +136,18 @@
 
 @code
 {
-
+    [Parameter]
+    public string UserId { get; set;} 
+    private User? user;
 
     [Parameter]
     public DigitalModel? DigitalModel { get; set; }
 
     private UserModelUpload Model { get; set; }
     private List<DigitalModel> digitalModels;
-    private User user; 
+     
     private int id {get; set;}
-    private User UserObj {get; set;}
+    
 
     protected override void OnParametersSet()
     {
@@ -182,9 +179,28 @@
     }
     private async Task HandleSubmit()
     {
+        //connects the userId with the model which is being uploaded
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var username = authState?.User?.Identity?.Name;
+
+        if (string.IsNullOrEmpty(username))
+        {
+            // Handle case where the user is not authenticated
+            return;
+        }
+
+        // Fetch the current user from the database
+        var currentUser = UserProvider.GetUserByUsername(username);
+        if (currentUser == null)
+        {
+            // Handle case where the user is not found
+            return;
+        }
+
         var digitalmodel = DigitalModel ?? new DigitalModel();
 
-        digitalmodel.User = Model.UserId;
+        // Assign current user's ID to the model
+        digitalmodel.User = currentUser;
         digitalmodel.Title = Model.Title;
         digitalmodel.Description = Model.Description;
         digitalmodel.ModelFiles = Model.ModelFiles;
@@ -195,16 +211,40 @@
 
         if (digitalmodel.Id == 0)
         {
+            // Add new model
             await modelProvider.AddModelAsync(digitalmodel);
-            Model = new UserModelUpload();
+            Model = new UserModelUpload(); // Reset the form
             Navigation.NavigateTo("/");
-            // submit the model
         }
         else
         {
+            // Update existing model
             await modelProvider.UpdateModelAsync(digitalmodel);
             Navigation.NavigateTo("/");
         }
+        //var digitalmodel = DigitalModel ?? new DigitalModel();
+
+        //digitalmodel.User = Model.UserId;
+      //  digitalmodel.Title = Model.Title;
+        //digitalmodel.Description = Model.Description;
+       // digitalmodel.ModelFiles = Model.ModelFiles;
+      //  digitalmodel.ImageUrl = Model.ImageUrl;
+       // digitalmodel.Specifications = Model.Specifications;
+       // digitalmodel.Category = Model.Category;
+       // digitalmodel.FileFormat = Model.FileFormat;
+
+     //   if (digitalmodel.Id == 0)
+      //  {
+        //    await modelProvider.AddModelAsync(digitalmodel);
+        //    Model = new UserModelUpload();
+        //    Navigation.NavigateTo("/");
+            // submit the model
+      //  }
+      //  else
+       // {
+          //  await modelProvider.UpdateModelAsync(digitalmodel);
+         //   Navigation.NavigateTo("/");
+       // }
 
     }
 
@@ -229,6 +269,8 @@
     }
     public sealed class UserModelUpload
     {
+
+        //holds the accosiated information associated with the upload
         public User UserId { get; set; }
 
         [Required(ErrorMessage = "Model title is required.")]
@@ -249,9 +291,9 @@
         public UserModelUpload()
         {
         }
-
         public UserModelUpload(DigitalModel digitalmodel)
         {
+            //maps the user property from the DigitalModel object
             UserId = digitalmodel.User; 
             Title = digitalmodel.Title;
             ModelFiles = digitalmodel.ModelFiles;

@@ -1,101 +1,135 @@
 ﻿@page "/Profile"
-
+@using ModelProject.Context
 @using ModelProject.Model
-@using Microsoft.AspNetCore.Http
-@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Components.Authorization
-@using System.ComponentModel.DataAnnotations
-@using System.IO;
-@using Microsoft.AspNetCore.Components.Forms;
-
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserProvider UserProvider
 @inject ModelProvider ModelProvider
-@inject NavigationManager Navigation
 @inject NavigationManager NavigationManager
-@inject UserManager<User> UserManager
 
-<PageTitle>User Profile</PageTitle>
+@*Ensures the user is logged in and if not the user can choose to either create an account or log in *@
+@if (user == null)
+{
+    <div class="card mb-3">
+        <h5>You are need an account to view your profile</h5>
+        <li class="nav-item">
+            <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
+        </li>
+        <li class="nav-item">
+            <button class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
+        </li>
+    </div>
+}
+else
+{
+  
+    <div class="container mt-4" custom>
+        <div class="card darker-border-0">
+            <div class="card-body custom-primary-background-color">
+               <div class="row align-items-centre">
+                   <div class="col-auto">
+                       @*Displays a defult profile picture image*@
+                        <img src="/img/ProfilePic.png" class="rounded mx-auto d-block" height="75" style="max-height:100%; max-width:100%;" />
+                   </div>
+                   
+                   <div class="col-auto">
+                      @*Displays the Username of the person who created the model*@   
+                     
+                      <h3>@user.UserName</h3>
+                   </div>
 
-<AuthorizeView>
-    <Authorized>
-        <h1 class="mt-4">My Uploaded Models</h1>
+                   <div class="col-auto">
+                       @*Displayes the total amount of models uploaded by the user*@
+                        <h7>Total models uploaded: @userModels?.Count</h7>
+                        
+                   </div>
+               </div>
+            </div>
+        </div>
+    </div>
+  
+    
+    <div class="container mt-4" custom>
+    <div class="card darker-border-0">
         
-        
-        @if (userModels == null)
+        @if(userModels == null || !userModels.Any())
         {
-            <p>Loading your models...</p>
-        }
-        else if (!userModels.Any())
-        {
-            <p>You haven't uploaded any models yet.</p>
+            <p>No Designs Uploaded Yet.</p>
         }
         else
         {
-            
+          
             <div class="row">
                 @foreach (var model in userModels)
                 {
                     <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <img src="@GetFirstImage(model.ImageUrl)" class="card-img-top" alt="@model.Title Image" />
+                        <div class="card h-100">
+                            @*fetches the image of the model*@
+                            <img src="/img/digitalmodels/@model.ImageUrl" class="card-img-top" alt="@model.Title" style="height: 200px; object-fit: cover;">
                             <div class="card-body">
+                                @*Fetches the title of the model*@
                                 <h5 class="card-title">@model.Title</h5>
-                                <p class="card-text"><strong>Category:</strong> @model.Category</p>
-                                <p class="card-text text-truncate">@model.Description</p>
-                                <button @onclick="() => NavigateToModelPage(model.Id)" class="btn btn-primary">View Details</button>
+
+
                             </div>
+                            <div class="card-footer">
+                                @*Gets the model category and file format of the model*@
+                                <small class="text-muted">Category: @model.Category</small><br />
+                                <small class="text-muted">File Format: @model.FileFormat</small>
+                                <button @onclick="@(() => GoToModelPage(model.Id))" class="btn btn-outline-primary" width="20">View Details</button>
+
+                            </div>
+
                         </div>
                     </div>
                 }
             </div>
+         
         }
-    </Authorized>
-    <NotAuthorized>
-      <div class="card mb-3">
-            <h5>You are need an account to upload a model</h5>
-        <li class="nav-item">
-            <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
+    </div>
+    </div>
+}
 
-        </li>
-
-        <li class="nav-item">
-            <button class="btn btn-secondary" @onclick="NavigateToRegister">Register</button>
-        </li>
-      </div>
-    </NotAuthorized>
-</AuthorizeView>
-@code
+@code 
 {
-    private string? username; 
+    private User? user;
     private List<DigitalModel>? userModels;
 
-    @*protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        var user = await UserManager.GetUserAsync(AuthenticationStateProvider.GetAuthenticationStateAsync().Result.User);
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var username = authState?.User?.Identity?.Name;
+
+        if (string.IsNullOrEmpty(username))
+        {
+            // If the user is not authenticated, redirect or show error
+            return;
+        }
+
+        // Fetches the user
+        user = UserProvider.GetUserByUsername(username);
         if (user != null)
         {
-            username = user.UserName;
-
-            userModels = await ModelProvider.GetUserModelsAsync(user.Id);
+            // Fetches models uploaded by the designer
+            userModels = await ModelProvider.GetModelByUserAsync(user);
         }
-    }*@
 
-    private string GetFirstImage(string images)
-    {
-        return images?.Split(',').FirstOrDefault() ?? "placeholder.jpg";
+        
     }
 
-     private void NavigateToLogin()
+    
+    private void GoToModelPage(int modelId)
     {
-        Navigation.NavigateTo("/Account/Login");
+        //redurects the user to the model page
+        NavigationManager.NavigateTo($"/ModelPage/{modelId}");
     }
 
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/Account/Login");
+    }
     private void NavigateToRegister()
     {
-        Navigation.NavigateTo("/Account/Register");
-    }
-
-    private void NavigateToModelPage(int modelId)
-    {
-        NavigationManager.NavigateTo($"/ModelPage/{modelId}");
+        NavigationManager.NavigateTo("/Account/Register");
     }
 }
