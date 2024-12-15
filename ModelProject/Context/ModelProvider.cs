@@ -84,7 +84,9 @@ public class ModelProvider
         var model = await _context.DigitalModels.FindAsync(modelId);
         if (model != null)
         {
+            //removes the model from the database
             _context.DigitalModels.Remove(model);
+            //saves the changes to the database
             await _context.SaveChangesAsync();
         }
     }

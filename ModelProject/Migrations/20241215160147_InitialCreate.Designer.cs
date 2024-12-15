@@ -11,7 +11,7 @@ using ModelProject.Context;
 namespace ModelProject.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241214224516_InitialCreate")]
+    [Migration("20241215160147_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -156,6 +156,9 @@ namespace ModelProject.Migrations
 
                     b.Property<string>("Category")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateUploaded")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")

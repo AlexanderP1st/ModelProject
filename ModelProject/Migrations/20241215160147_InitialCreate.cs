@@ -185,7 +185,8 @@ namespace ModelProject.Migrations
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     Specifications = table.Column<string>(type: "TEXT", nullable: false),
                     Downloads = table.Column<int>(type: "INTEGER", nullable: false),
-                    WatchListCount = table.Column<int>(type: "INTEGER", nullable: false)
+                    WatchListCount = table.Column<int>(type: "INTEGER", nullable: false),
+                    DateUploaded = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

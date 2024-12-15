@@ -4,128 +4,94 @@
 @inject ModelProvider ModelProvider
 @inject NavigationManager NavigationManager
 
-
 <PageTitle>AP Models</PageTitle>
 
-@*Checks if models have been uploaded*@
+@*Displays this message if no models have been uploaded*@
 @if (digitalmodel == null || !digitalmodel.Any())
 {
     <p>No models uploaded yet.</p>
 }
 else
 {
-    //the format of the model on the hompage
     <div class="container">
-        <div class="row">
+        <div class="row mb-4">
             <div class="input-group">
+                @*Allows the user to enter a word to filter a models*@
                 <span class="input-group-text" id="search">Search</span>
-                <input type="text" class="form-control" placeholder="Search for models..." aria-label="Search" aria-describedby="search" @bind="searchTerm" @bind:event="oninput" />
+                <input type="text" class="form-control" placeholder="Search for models..." @bind="searchTerm" @bind:event="oninput">
             </div>
-            @foreach (var model in digitalmodel)
+        </div>
+
+        <div class="row">
+            @foreach (var model in FilteredModels)
             {
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                     <div class="card">
-                        
+                        @*Displays the image of the model*@
                         <img src="/img/digitalmodels/@model.ImageUrl" class="img-thumbnail" alt="@model.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
                         <div class="card-body">
+                            @*Fetches and displays the model title and category*@
                             <h5 class="card-title">@model.Title</h5>
                             <p class="card-text">@model.Category</p>
-                            <button @onclick="@(() => GoToModelPage(model.Id))" class="btn btn-outline-primary" width="20">View Details</button>
+                            <button @onclick="() => GoToModelPage(model.Id)" class="btn btn-outline-primary">View Details</button>
                         </div>
                     </div>
                 </div>
             }
         </div>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4" />
 
-        @foreach (var digitalmodel in FilteredModels)
-        {
-            <div class="col">
-                <StoreItem DigitalModels="digitalModels" />
-            </div>
-        }
-
-
+        @*Displays if the word the user enterd doesn't match a model title or category*@
         @if (!FilteredModels.Any())
         {
             <p>No models found :(</p>
         }
-
     </div>
 }
 
-@code
-{
-    private string[] imageUrl = [];
-
+@code {
     private IEnumerable<DigitalModel> digitalmodel;
     private string searchTerm = "";
     private SortCriteria sortCriteria = SortCriteria.Title;
 
-    //returns the models which have a corrosponding name or category
-    private IEnumerable<DigitalModel> filteredModels;
-    private IEnumerable<DigitalModel> FilteredModels
-    {
-        get
-        {
-            return filteredModels.Where(GetSearchCriteria);
-        }
-        set
-        {
-            filteredModels = value;
-        }
-    }
-
-
-    //checks if the search item relates to any model which has been uploaded
-    private bool GetSearchCriteria(DigitalModel digitalmodel)
-    {
-        if (string.IsNullOrWhiteSpace(searchTerm)) return true;
-
-        return digitalmodel.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-             || digitalmodel.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
-    }
-
-
-
-
-
+    // Filtered models dynamically updates based on search term
+    private IEnumerable<DigitalModel> FilteredModels => digitalmodel?.Where(GetSearchCriteria).ToList() ?? Enumerable.Empty<DigitalModel>();
 
     protected override async Task OnInitializedAsync()
     {
         digitalmodel = await ModelProvider.GetAllModelsAsync();
-        filteredModels = digitalmodel;
         StateHasChanged();
-
     }
 
     private void GoToModelPage(int modelId)
     {
+        //navigation to model page of a specific model
         NavigationManager.NavigateTo($"/ModelPage/{modelId}");
     }
 
+    private bool GetSearchCriteria(DigitalModel model)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm)) return true;
 
-
+        //checks that the title and category matches the searchterm
+        return model.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+               model.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+    }
 
     private void Sort(SortCriteria criteria)
     {
         sortCriteria = criteria;
-        filteredModels = criteria switch
+        //uses a switch expression to reorder the list of models
+        digitalmodel = sortCriteria switch
         {
-            SortCriteria.Title => FilteredModels = filteredModels.OrderBy(c => c.Title),
-            SortCriteria.Category => FilteredModels = filteredModels.OrderBy(c => c.Category),
-            _ => filteredModels
+            SortCriteria.Title => digitalmodel.OrderBy(m => m.Title),
+            SortCriteria.Category => digitalmodel.OrderBy(m => m.Category),
+            _ => digitalmodel
         };
     }
-
-
 
     private enum SortCriteria
     {
         Title,
         Category
-
     }
-
-
 }

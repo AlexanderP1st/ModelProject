@@ -3,6 +3,7 @@
 @using ModelProject.Model
 @using Microsoft.AspNetCore.Components.Authorization
 
+
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserProvider UserProvider
 @inject ModelProvider ModelProvider
@@ -34,15 +35,46 @@
                     </div>
                 </div>
                 <div class="col-md-4">
+                    <div class="card text-white bg-danger mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Watchlist</h5>
+                            @*Displays the totl Watchlist a user has achived*@
+                            <p class="card-text display-4">@totalWatchlist</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-warning mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Percentage Difference (total downloads and total watchlist)</h5>
+                            @* Displays the percentage difference between downloads and watchlist *@
+                            <p class="card-text display-4">@percentageDifference</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
                     <div class="card text-white bg-info mb-3">
                         <div class="card-body">
                             <h5 class="card-title">Most Watched Model</h5>
+                            @*Displays the most Watched model the user uploaded*@
+                            <p class="card-text display-4">@mostWatchedModel?.Title</p>
 
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Most Downloaded Model</h5>
+                            @*Displays the most downloaded model the user uploaded*@
+                            <p class="card-text display-4">@mostDownloadedModel?.Title</p>
 
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
             <h3>Your Models</h3>
             @if (models == null)
             {
@@ -88,6 +120,7 @@
                 </table>
             }
         </div>
+      
     </Authorized>
     <NotAuthorized>
         @*If the user isn't authorised then they will be forced to either login or register if they wish to access the dashboard*@
@@ -106,7 +139,11 @@
 @code {
     private List<DigitalModel>? models;
     private int totalModels;
+    private int totalWatchlist;
     private int totalDownloads;
+    private DigitalModel? mostDownloadedModel;
+    private DigitalModel? mostWatchedModel;
+    private double percentageDifference;
 
 
     protected override async Task OnInitializedAsync()
@@ -124,7 +161,24 @@
                 //if the user exists it with retreive the users models,total downloads and models
                 models = await ModelProvider.GetModelByUserAsync(user);
                 totalModels = models.Count;
+                totalWatchlist = models.Sum(model => model.WatchListCount);
                 totalDownloads = models.Sum(model => model.Downloads);
+
+                //featches the most watched model
+                mostWatchedModel = models.OrderByDescending(model => model.WatchListCount).FirstOrDefault();
+
+                //using orders it features the most downloaded model
+                mostDownloadedModel = models.OrderByDescending(model => model.Downloads).FirstOrDefault();
+
+                if (totalDownloads + totalWatchlist > 0)
+                {
+                    double average = (totalDownloads + totalWatchlist) / 2.0;
+                    percentageDifference = Math.Round(Math.Abs(totalDownloads - totalWatchlist) / average * 100, 2);
+                }
+                else
+                {
+                    percentageDifference = 0;
+                }
             }
             else
             {
@@ -132,6 +186,9 @@
                 models = new List<DigitalModel>();
                 totalModels = 0;
                 totalDownloads = 0;
+                mostWatchedModel = null;
+                mostDownloadedModel = null;
+                percentageDifference = 0;
             }
         }
         else
@@ -139,6 +196,9 @@
             models = new List<DigitalModel>();
             totalModels = 0;
             totalDownloads = 0;
+            mostWatchedModel = null;
+            mostDownloadedModel = null;
+            percentageDifference = 0;
         }
     }
 
@@ -164,4 +224,6 @@
     {
         Navigation.NavigateTo("/Account/Register");
     }
+
+    
 }

@@ -145,9 +145,9 @@
 
     private UserModelUpload Model { get; set; }
     private List<DigitalModel> digitalModels;
-     
+
     private int id {get; set;}
-    
+
 
     protected override void OnParametersSet()
     {
@@ -212,6 +212,7 @@
         if (digitalmodel.Id == 0)
         {
             // Add new model
+            digitalmodel.DateUploaded = DateTime.UtcNow;
             await modelProvider.AddModelAsync(digitalmodel);
             Model = new UserModelUpload(); // Reset the form
             Navigation.NavigateTo("/");

@@ -77,6 +77,8 @@ else
                                 <small class="text-muted">Category: @model.Category</small><br />
                                 <small class="text-muted">File Format: @model.FileFormat</small>
                                 <button @onclick="@(() => GoToModelPage(model.Id))" class="btn btn-outline-primary" width="20">View Details</button>
+                                @*This button is used to delete a specific model from a database *@
+                                <button class="btn btn-danger" @onclick="() => DeleteModel(model.Id)">Delete</button>
 
                             </div>
 
@@ -117,6 +119,18 @@ else
         
     }
 
+    private async Task DeleteModel(int modelId)
+    {
+        //retreives the model with the specified Id from the models collection
+        var modelToDelete = userModels?.FirstOrDefault(m => m.Id == modelId);
+        if (modelToDelete != null)
+        {
+
+            userModels?.Remove(modelToDelete);
+            //through the model provider it deletes the model from the database
+            await ModelProvider.DeleteModelAsync(modelId);
+        }
+    }
     
     private void GoToModelPage(int modelId)
     {
