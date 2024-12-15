@@ -66,7 +66,7 @@ else
     [Parameter]
     public int ModelId { get; set; }
     private string[] imageUrl = [];
-   
+
     private DigitalModel? digitalModel;
     private List<string> imageFiles = new();
     private List<string> modelFiles = new();
@@ -78,6 +78,8 @@ else
         {
             imageFiles = digitalModel.ImageUrl.Split(',').ToList();
             modelFiles = digitalModel.ModelFiles.Split(',').ToList();
+
+            await modelProvider.WatchlistCountAsync(ModelId);
         }
     }
 

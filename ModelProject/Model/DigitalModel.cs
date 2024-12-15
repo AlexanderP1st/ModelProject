@@ -27,6 +27,6 @@ namespace ModelProject.Model
 
         public int Downloads { get; set; }
 
-        public int FileSize { get; set; } 
+        public int WatchListCount { get; set; }
     }
 }

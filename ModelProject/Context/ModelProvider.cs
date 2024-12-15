@@ -66,7 +66,16 @@ public class ModelProvider
                              .FirstOrDefaultAsync(m => m.Id == id);
     }
 
-   
 
+    public async Task WatchlistCountAsync(int modelId)
+    {
+        var model = await GetModelByIdAsync(modelId);
+        if (model != null)
+        {
+            model.WatchListCount++;
+
+            await UpdateModelAsync(model);
+        }
+    }
 
 }
