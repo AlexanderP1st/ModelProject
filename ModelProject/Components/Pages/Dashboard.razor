@@ -1,87 +1,98 @@
 ﻿@page "/dashboard"
+@using ModelProject.Context
 @using ModelProject.Model
-@inject ModelProvider ModelProvider
 @using Microsoft.AspNetCore.Components.Authorization
+
 @inject AuthenticationStateProvider AuthenticationStateProvider
-
+@inject UserProvider UserProvider
 @inject ModelProvider ModelProvider
-@inject NavigationManager NavigationManager
+@inject NavigationManager Navigation
 
-<PageTitle>Dashboard</PageTitle>
+<h1>User Dashboard</h1>
 
 <AuthorizeView>
-    <Authorized Context="Auth">
-        <h1>Dashboard</h1>
-        <div class="container mt-4">
-        <div class="row mt-4">
-           <!-- Summary Cards -->
-        <div class="col-md-4">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Models</h5>
-                    <p class="card-text display-4">@totalModels</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Downloads</h5>
-                    <p class="card-text display-4">@totalDownloads</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-info mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Most Watched Model</h5>
-                    
-                </div>
-            </div>
-        </div>
-    </div>
+    <Authorized Context="authState">
 
-    <!-- Models Table -->
-    <div class="row mt-4">
-        <h3>All Models</h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Downloads</th>
-                    <th>Watchlist</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (models == null || !models.Any())
-                {
-                    <tr>
-                        <td colspan="5" class="text-center">No models available.</td>
-                    </tr>
-                }
-                else
-                {
-                    @foreach (var model in models)
-                    {
+        <div class="container mt-4">
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Models</h5>
+                            @*Displays the total models the user has uploaded*@
+                            <p class="card-text display-4">@totalModels</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Downloads</h5>
+                            @*Displays the totl downloads a user has achived*@
+                            <p class="card-text display-4">@totalDownloads</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Most Watched Model</h5>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Your Models</h3>
+            @if (models == null)
+            {
+
+                <p>Loading your models...</p>
+            }
+            else if (!models.Any())
+            {
+                //if no models have been uploaded by the user this message will be displayed
+                <p>You have not uploaded any models yet.</p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>@model.Id</td>
-                            <td>@model.Title</td>
-                            <td>@model.Category</td>
-                            <td>@model.Downloads</td>
-                            <td>@model.WatchListCount</td>
+                            @*The title for each field in the table*@
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Downloads</th>
+                            <th>Watchers</th>
+                            <th>Actions</th>
                         </tr>
-                    }
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+                    </thead>
+                    <tbody>
+                        @foreach (var model in models)
+                        {
+                            <tr>
+                                @*Fetches the data relating to each field *@
+                                <td>@model.Id</td>
+                                <td>@model.Title</td>
+                                <td>@model.Category</td>
+                                <td>@model.Downloads</td>
+                                <td>@model.WatchListCount</td>
+                                <td>
+                                    @*Displays the delete button to delete a model from the database*@
+                                    <button class="btn btn-danger" @onclick="() => DeleteModel(model.Id)">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
     </Authorized>
     <NotAuthorized>
+        @*If the user isn't authorised then they will be forced to either login or register if they wish to access the dashboard*@
         <div class="card mb-3">
-            <h5>You are need an account to access your dashboard</h5>
+            <h5>You are need an account to view a dashboard</h5>
         <li class="nav-item">
             <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
         </li>
@@ -92,39 +103,65 @@
     </NotAuthorized>
 </AuthorizeView>
 
-
-
-
-    
 @code {
-    
+    private List<DigitalModel>? models;
     private int totalModels;
     private int totalDownloads;
-    private DigitalModel? mostWatchedModel;
-    private IEnumerable<DigitalModel> models;
+
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch all models
-        models = await ModelProvider.GetAllModelsAsync();
+        //Initializes the dashboard by fetching the authentication state
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var username = authState?.User?.Identity?.Name;
 
-        // Calculate total models
-        totalModels = models.Count();
+        if (!string.IsNullOrEmpty(username))
+        {
+            var user = UserProvider.GetUserByUsername(username);
 
-        // Calculate total downloads
-        totalDownloads = models.Sum(model => model.Downloads);
-
-        
+            if (user != null)
+            {
+                //if the user exists it with retreive the users models,total downloads and models
+                models = await ModelProvider.GetModelByUserAsync(user);
+                totalModels = models.Count;
+                totalDownloads = models.Sum(model => model.Downloads);
+            }
+            else
+            {
+                //if the user doesn't exist everything is set to 0 
+                models = new List<DigitalModel>();
+                totalModels = 0;
+                totalDownloads = 0;
+            }
+        }
+        else
+        {
+            models = new List<DigitalModel>();
+            totalModels = 0;
+            totalDownloads = 0;
+        }
     }
 
- 
+    private async Task DeleteModel(int modelId)
+    {
+        //retreives the model with the specified Id from the models collection
+        var modelToDelete = models?.FirstOrDefault(m => m.Id == modelId);
+        if (modelToDelete != null)
+        {
 
+            models?.Remove(modelToDelete);
+            //through the model provider it deletes the model from the database 
+            await ModelProvider.DeleteModelAsync(modelId);
+        }
+    }
+
+    //navigation to the Login or Register page
     private void NavigateToLogin()
     {
-        NavigationManager.NavigateTo("/Account/Login");
+        Navigation.NavigateTo("/Account/Login");
     }
     private void NavigateToRegister()
     {
-        NavigationManager.NavigateTo("/Account/Register");
+        Navigation.NavigateTo("/Account/Register");
     }
 }

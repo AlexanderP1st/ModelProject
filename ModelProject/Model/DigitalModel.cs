@@ -27,6 +27,7 @@ namespace ModelProject.Model
 
         public int Downloads { get; set; }
 
+        //creates a watchlist field which is responsable to counting the amount of people who have seen a specific model.
         public int WatchListCount { get; set; }
     }
 }

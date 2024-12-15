@@ -72,9 +72,20 @@ public class ModelProvider
         var model = await GetModelByIdAsync(modelId);
         if (model != null)
         {
+            //increases the Watchlist count by 1 every time a user enters the model page
             model.WatchListCount++;
-
+            //updates the property of the Watchlistcount within the database. 
             await UpdateModelAsync(model);
+        }
+    }
+
+    public async Task DeleteModelAsync(int modelId)
+    {
+        var model = await _context.DigitalModels.FindAsync(modelId);
+        if (model != null)
+        {
+            _context.DigitalModels.Remove(model);
+            await _context.SaveChangesAsync();
         }
     }
 
