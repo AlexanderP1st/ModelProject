@@ -1,6 +1,10 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@using ModelProject.Context
 @using ModelProject.Model
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserProvider UserProvider
 @inject ModelProvider ModelProvider
 @inject NavigationManager NavigationManager
 
@@ -19,6 +23,34 @@ else
                 @*Allows the user to enter a word to filter a models*@
                 <span class="input-group-text" id="search">Search</span>
                 <input type="text" class="form-control" placeholder="Search for models..." @bind="searchTerm" @bind:event="oninput">
+            </div>
+        </div>
+        <div class="container">
+            @* Display the models based on the LastDownloadedCategory *@
+            <div class="row mb-4">
+                <h3>Recommended Models</h3>
+                @if (recommendedModels != null && recommendedModels.Any())
+                {
+                    @* Display top 3 models from the same category *@
+                    @foreach (var model in recommendedModels.Take(3))
+                    {
+                        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div class="card">
+                                @*Fetches the images and the title, category of a model*@
+                                <img src="/img/digitalmodels/@model.ImageUrl" class="img-thumbnail" alt="@model.Title" onerror="this.onerror = null; this.src='/img/no_digitalmodels.png'">
+                                <div class="card-body">
+                                    <h5 class="card-title">@model.Title</h5>
+                                    <p class="card-text">@model.Category</p>
+                                    <button @onclick="() => GoToModelPage(model.Id)" class="btn btn-outline-primary">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No recommended models available.</p>
+                }
             </div>
         </div>
 
@@ -50,6 +82,7 @@ else
 
 @code {
     private IEnumerable<DigitalModel> digitalmodel;
+    private IEnumerable<DigitalModel> recommendedModels = new List<DigitalModel>();
     private string searchTerm = "";
     private SortCriteria sortCriteria = SortCriteria.Title;
 
@@ -59,7 +92,20 @@ else
     protected override async Task OnInitializedAsync()
     {
         digitalmodel = await ModelProvider.GetAllModelsAsync();
-        StateHasChanged();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var username = authState.User.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(username))
+        {
+            var user = UserProvider.GetUserByUsername(username);
+            //checks if the user exists and if the LastDownloadedCategory is empty
+            if (user != null && !string.IsNullOrEmpty(user.LastDownloadedCategory))
+            {
+                // Fetches models from the database that match the 'LastDownloadedCategory'
+                recommendedModels = await ModelProvider.GetModelsByCategoryAsync(user.LastDownloadedCategory);
+            }
+            StateHasChanged();
+        }
     }
 
     private void GoToModelPage(int modelId)

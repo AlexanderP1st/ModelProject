@@ -1,7 +1,16 @@
 ﻿@page "/ModelPage/{ModelId:int}"
-@using ModelProject.Model
+@inject UserManager<User> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ModelProvider modelProvider
 @inject NavigationManager NavigationManager
+@inject UserProvider UserProvider
+
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using ModelProject.Context
+@using ModelProject.Model
 
 
 <PageTitle>Model Details</PageTitle>
@@ -86,7 +95,7 @@ else
     }
 
     //downloads
-    private void DownloadModel()
+    private async Task DownloadModel()
     {
         if (digitalModel != null)
         {
@@ -95,8 +104,25 @@ else
             //updates the download within the database
             modelProvider.UpdateModelAsync(digitalModel);
 
+            // Update the LastDownloadedCategory for the current user
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            var username = authState.User.Identity?.Name;
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                var user = UserProvider.GetUserByUsername(username);
+
+                if (user != null)
+                {
+                    //updates the LastDownloadCategory with teh category of the model file they just downloaded
+                    await UserProvider.UpdateLastDownloadedCategoryAsync(user.Id, digitalModel.Category);
+                }
+            }
+
         }
     }
+   
 
     // navigation command to the home page
     private void NavigateToHome()

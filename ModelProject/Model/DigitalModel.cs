@@ -30,6 +30,6 @@ namespace ModelProject.Model
         //creates a watchlist field which is responsable to counting the amount of people who have seen a specific model.
         public int WatchListCount { get; set; }
 
-        public DateTime DateUploaded { get; set; }
+        
     }
 }

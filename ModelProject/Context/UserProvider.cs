@@ -24,5 +24,18 @@ namespace ModelProject.Context
         {
             return await _context.Users.FindAsync(id); 
         }
+
+        public async Task UpdateLastDownloadedCategoryAsync(string userId, string category)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user != null)
+            {
+                //assigns a category to the user.LastDownloadedCategory
+                user.LastDownloadedCategory = category;
+                _context.Entry(user).State = EntityState.Modified; 
+                //saves changes to the database
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

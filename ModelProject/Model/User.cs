@@ -7,5 +7,7 @@ namespace ModelProject.Model
         //creates a new user
         public string Email { get; set; }
 
+        //creates a field which holds the users last downloaded category
+        public string? LastDownloadedCategory { get; set; } 
     }
 }

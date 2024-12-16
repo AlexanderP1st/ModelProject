@@ -90,5 +90,23 @@ public class ModelProvider
             await _context.SaveChangesAsync();
         }
     }
+    public async Task UpdateLastDownloadedCategoryAsync(int userId, string category)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user != null)
+        {
+            user.LastDownloadedCategory = category;
+            await _context.SaveChangesAsync();
+        }
+    }
 
+
+    public async Task<List<DigitalModel>> GetModelsByCategoryAsync(string category)
+    {
+        //fetches all the models where the category matches the selected category
+        return await _context.DigitalModels
+                             //filters models by category
+                             .Where(m => m.Category.Equals(category, StringComparison.OrdinalIgnoreCase))
+                             .ToListAsync();
+    }
 }
